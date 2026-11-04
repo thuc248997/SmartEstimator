@@ -312,3 +312,22 @@ def test_equipment_defaults_and_validation(client, seeded):
     EquipmentCost.objects.filter(pk=eq.pk).update(quantity=6)
     ok = client.patch(f"/api/v1/revisions/{rid}/equipment/{eq.pk}", {"unit_price": "100"}, format="json")
     assert ok.data["quantity"] == "6.000" and ok.data["amount"] == "600"
+
+
+def test_project_with_exported_report_cannot_be_deleted(client, seeded):
+    pid, rid, _, _ = _setup_revision(client, seeded, [("AF.12111", "", "1")])
+    client.post(f"/api/v1/revisions/{rid}/calculate")
+    assert client.post(f"/api/v1/revisions/{rid}/export?template=estimate-xlsx").status_code == 200
+    r = client.delete(f"/api/v1/projects/{pid}")
+    assert r.status_code == 409 and "không xóa được" in r.data["detail"]
+    pid2, _, _, _ = _setup_revision(client, seeded, [("AF.12111", "", "1")])
+    assert client.delete(f"/api/v1/projects/{pid2}").status_code == 204
+
+
+def test_release_list_hides_unpublished(client, seeded):
+    from apps.catalog.models import DatasetRelease
+
+    DatasetRelease.objects.create(kind="PRICE", name="Bộ giá lỗi", version="x", status="draft")
+    names = [r["name"] for r in client.get("/api/v1/catalog/releases").data["results"]]
+    assert "Bộ giá lỗi" not in names and seeded["price"].name in names
+    assert client.get("/api/v1/catalog/releases", {"status": "draft"}).data["count"] == 1

@@ -210,6 +210,7 @@ def import_hn_prices(labor: Candidate | None, machine: Candidate | None) -> Data
                     "issued_on": d.issued_on,
                     "url": d.urls[0],
                     "sha256": d.sha256,
+                    "file_sha256": [f.sha256 for f in d.files],
                     "note": d.note,
                 }
                 for k, d in (("labor", labor), ("machine", machine))

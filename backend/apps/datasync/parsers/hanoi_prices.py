@@ -122,7 +122,7 @@ def parse_machines(text: str) -> list[MachinePrice]:
                 continue  # tiêu đề bảng lặp lại ở đầu trang
             if not seg or re.fullmatch(r"[\d\s]+", seg) or (seg.isupper() and len(seg) >= 2):
                 continue  # số, mũ, tiêu đề chương/mục viết hoa
-            if rows and (seg[:1].islower() or seg[:1] in "(-/,"):
+            if rows and rows[-1].get("code") and (seg[:1].islower() or seg[:1] in "(-/,"):
                 rows[-1]["post"].append(seg)  # đuôi tên của dòng trên
             else:
                 rows.append({"code": None, "pre_text": seg})
