@@ -1,0 +1,16 @@
+[project]
+name = "smartestimator-backend"
+version = "0.1.0"
+description = "Vietnamese construction cost estimating backend (dinh muc / don gia)"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]
