@@ -73,8 +73,16 @@ def http_get(url: str, data: dict | None = None, headers: dict | None = None) ->
         return r.read()
 
 
-def download(url: str) -> Fetched:
-    raw = http_get(url)
+def download(url: str, retries: int = 2) -> Fetched:
+    last: Exception | None = None
+    for _ in range(retries + 1):
+        try:
+            raw = http_get(url)
+            break
+        except OSError as e:  # timeout / mạng chập chờn → thử lại
+            last = e
+    else:
+        raise last  # type: ignore[misc]
     if not raw.startswith(b"%PDF"):
         raise ValueError(f"Tệp tải về không phải PDF: {url}")
     sha = hashlib.sha256(raw).hexdigest()
@@ -212,6 +220,31 @@ def hn_portal_candidate(sid: str) -> Candidate | None:
                 note=HN_PORTAL + href,
             )
     return None
+
+
+def cached_candidate(doc: dict, source_id: str) -> Candidate | None:
+    """Dựng lại ứng viên từ tệp đã nạp lần trước khi nguồn tạm thời không tải được.
+
+    ``doc["sha256"]`` là mã gộp của ứng viên (sha256 của chuỗi mã các tệp); tệp lưu trong cache theo mã riêng.
+    """
+    combined = doc.get("sha256", "")
+    file_shas = doc.get("file_sha256") or [
+        p.stem for p in cache_dir().glob("*.pdf") if hashlib.sha256(p.stem.encode()).hexdigest() == combined
+    ]
+    paths = [cache_dir() / f"{sha}.pdf" for sha in file_shas]
+    if not combined or not paths or not all(p.exists() for p in paths):
+        return None
+    c = Candidate(
+        source_id,
+        [doc.get("url", "")],
+        issuer="Sở Xây dựng Hà Nội",
+        number=doc.get("number", ""),
+        issued_on=doc.get("issued_on", ""),
+        origin="cache",
+        note="Dùng lại tệp đã nạp (nguồn tạm thời lỗi)",
+    )
+    c.files = [Fetched(c.urls[0], p, p.stem, p.stat().st_size) for p in paths]
+    return c if c.sha256 == combined else None
 
 
 def fill_doc_info(c: Candidate) -> None:

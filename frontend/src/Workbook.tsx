@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, ApiError, CONSTRUCTION_TYPES, Detail, Equipment, fmt, Line, Page, Project, Release, Resource, ResourceTotal, Revision, Run, WorkItem } from "./api";
 import TienLuong, { EditableField, FocusInfo, normExpr, parseDetailInput, TLHandle, TLRow, viExpr } from "./sheets/TienLuong";
 import PhanTich from "./sheets/PhanTich";
-import TongHopVatTu from "./sheets/TongHopVatTu";
+import TongHopVatTu, { displayCode } from "./sheets/TongHopVatTu";
 import TongHopKinhPhi from "./sheets/TongHopKinhPhi";
 import TongHopChiPhiXD, { sumEquipment } from "./sheets/TongHopChiPhiXD";
 import ChiPhiThietBi from "./sheets/ChiPhiThietBi";
@@ -869,7 +869,7 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
         </Modal>
       )}
       {dialog?.kind === "override" && (
-        <Modal title={`Giá riêng: ${dialog.t.resource_code} — ${dialog.t.name}`} wide onClose={() => setDialog(null)}
+        <Modal title={`Giá riêng: ${displayCode(dialog.t.resource_code) ? `${dialog.t.resource_code} — ` : ""}${dialog.t.name}`} wide onClose={() => setDialog(null)}
           footer={<><button className="btn" onClick={() => setDialog(null)}>Hủy</button><button className="btn primary" onClick={() => saveOverride(dialog)}>Áp dụng & tính lại</button></>}>
           <p className="doc-sub">Giá hiện tại: {dialog.t.price ? Number(dialog.t.price).toLocaleString("vi-VN") : "chưa có"} đ/{dialog.t.unit} ({dialog.t.price_source ?? "—"}). Giá riêng chỉ áp dụng cho bản dự toán này, không sửa bộ giá gốc, và được lưu vết.</p>
           <div className="field"><label>Đơn giá mới (đ/{dialog.t.unit}, chưa VAT, đến hiện trường)</label>

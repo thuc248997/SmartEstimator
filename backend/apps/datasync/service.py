@@ -14,6 +14,7 @@ from .models import DataUpdateRun
 from .parsers import hanoi_prices, tt38
 from .sources import (
     Candidate,
+    cached_candidate,
     fill_doc_info,
     hn_portal_candidate,
     load_manifest,
@@ -61,8 +62,9 @@ def _known_newer(manifest: dict, sid: str, chosen: Candidate) -> list[str]:
     out = []
     for k in manifest.get("sources", {}).get(sid, {}).get("known_newer", []):
         if (k.get("issued_on") or "") > (chosen.issued_on or ""):
+            y, m, d = (k["issued_on"] + "--").split("-")[:3]
             out.append(
-                f"Có văn bản mới hơn {k['number']} ngày {k['issued_on']} nhưng chưa có tệp tải về: {k.get('note', '')}"
+                f"Có văn bản mới hơn {k['number']} ngày {d}/{m}/{y} nhưng chưa có tệp tải về: {k.get('note', '')}"
             )
     return out
 
@@ -117,17 +119,39 @@ def update_hn_prices(manifest: dict, log, force: bool = False) -> dict:
     mach_c = [x for x in [_safe(hn_portal_candidate, "hn-machine", log)] if x] + manifest_candidates(
         manifest, "hn-machine"
     )
-    labor, w1 = _pick_parsable(_newest(labor_c, log), _at_least(hanoi_prices.parse_labor, lambda: MIN_LABOR_ROWS), log)
-    machine, w2 = _pick_parsable(
-        _newest(mach_c, log), _at_least(hanoi_prices.parse_machines, lambda: MIN_MACHINE_ROWS), log
+    # Tệp của bộ giá đầy đủ gần nhất: dùng lại khi nguồn mới tạm thời không tải được
+    prev: dict[str, dict] = {}
+    last = (
+        DatasetRelease.objects.filter(kind="PRICE", meta__source_id="hn-prices", status="published")
+        .order_by("-id")
+        .first()
     )
+    if last:
+        prev = {d.get("kind"): d for d in last.meta.get("documents", [])}
+    labor_list, mach_list = _newest(labor_c, log), _newest(mach_c, log)
+    for kind, lst in (("labor", labor_list), ("machine", mach_list)):
+        cached = cached_candidate(prev[kind], f"hn-{kind}") if kind in prev else None
+        if cached and not any(c.sha256 == cached.sha256 for c in lst):
+            lst.append(cached)
+            lst.sort(key=lambda c: (c.issued_on or "", c.origin != "cache"), reverse=True)
+    labor, w1 = _pick_parsable(labor_list, _at_least(hanoi_prices.parse_labor, lambda: MIN_LABOR_ROWS), log)
+    machine, w2 = _pick_parsable(mach_list, _at_least(hanoi_prices.parse_machines, lambda: MIN_MACHINE_ROWS), log)
     warnings = w1 + w2
+    for d in (labor, machine):
+        if d and d.origin == "cache":
+            warnings.append(f"Không tải được nguồn mới nhất; dùng lại tệp {d.number} đã nạp trước đó")
     if machine:
         warnings += _known_newer(manifest, "hn-machine", machine)
     if labor:
         warnings += _known_newer(manifest, "hn-labor", labor)
-    if not labor and not machine:
-        return {"status": "error", "message": "Không lấy được bảng giá nhân công / ca máy Hà Nội", "warnings": warnings}
+    if not labor or not machine:
+        # Không bao giờ tạo bộ giá thiếu nhân công hoặc thiếu ca máy
+        missing = " và ".join(x for x, d in (("đơn giá nhân công", labor), ("giá ca máy", machine)) if not d)
+        return {
+            "status": "error",
+            "message": f"Không lấy được {missing} Hà Nội — giữ nguyên bộ giá hiện có",
+            "warnings": warnings,
+        }
     shas = sorted(d.sha256 for d in (labor, machine) if d)
     docs = [_doc(d) for d in (labor, machine) if d]
     for rel in DatasetRelease.objects.filter(kind="PRICE", meta__source_id="hn-prices", status="published").order_by(

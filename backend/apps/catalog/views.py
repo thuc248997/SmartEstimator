@@ -41,6 +41,13 @@ class DatasetReleaseViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DatasetReleaseSerializer
     filterset_fields = ["kind", "status", "region", "is_sample"]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        # Mặc định chỉ bản đã phát hành (bản nháp / bị gỡ không được chọn cho dự toán mới)
+        if self.action == "list" and "status" not in self.request.query_params:
+            qs = qs.filter(status=DatasetRelease.Status.PUBLISHED)
+        return qs
+
 
 class ResourceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Resource.objects.all()

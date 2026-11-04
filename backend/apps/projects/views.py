@@ -37,6 +37,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = serializer.save(created_by=self.request.user)
         record(self.request.user, "project.create", project)
 
+    def destroy(self, request, *args, **kwargs):
+        from django.db.models import ProtectedError
+
+        project = self.get_object()
+        try:
+            with transaction.atomic():
+                record(request.user, "project.delete", project, {"name": project.name})
+                project.delete()
+        except ProtectedError:
+            return Response(
+                {"detail": "Công trình đã có hồ sơ xuất Excel (được lưu để truy vết) nên không xóa được."},
+                status=status.HTTP_409_CONFLICT,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def perform_update(self, serializer):
         before = ProjectSerializer(serializer.instance).data
         project = serializer.save()

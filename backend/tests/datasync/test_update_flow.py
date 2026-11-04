@@ -33,7 +33,7 @@ def fake_sources(monkeypatch, tmp_path):
         import hashlib
 
         raw = files[url]
-        p = tmp_path / (hashlib.sha256(raw).hexdigest() + ".pdf")
+        p = sources.cache_dir() / (hashlib.sha256(raw).hexdigest() + ".pdf")
         p.write_bytes(raw)
         by_path[str(p)] = url
         return sources.Fetched(url, p, hashlib.sha256(raw).hexdigest(), len(raw))
@@ -126,3 +126,30 @@ def test_update_then_up_to_date(fake_sources, admin_client):
 
 def test_only_staff_can_update(client):
     assert client.post("/api/v1/data-updates", {}, format="json").status_code == 403
+
+
+def test_source_timeout_reuses_cached_file_and_never_imports_partial(fake_sources, admin_client, monkeypatch):
+    first = admin_client.post("/api/v1/data-updates", {}, format="json").data
+    assert {x["source"]: x["status"] for x in first["results"]}["hn-prices"] == "updated"
+    n_price = DatasetRelease.objects.filter(kind="PRICE").count()
+    real = sources.download
+
+    def flaky(url, retries=2):
+        if "machine" in url:
+            raise OSError("timed out")
+        return real(url)
+
+    monkeypatch.setattr(sources, "download", flaky)
+    again = admin_client.post("/api/v1/data-updates", {"sources": ["hn-prices"]}, format="json").data
+    r = again["results"][0]
+    assert r["status"] == "up_to_date", r  # dùng lại tệp ca máy đã nạp → vẫn là bản mới nhất
+    assert any("dùng lại tệp" in w for w in r["warnings"])
+    assert DatasetRelease.objects.filter(kind="PRICE").count() == n_price
+
+    # mất cả tệp cache → báo lỗi, không tạo bộ giá thiếu ca máy
+    from apps.datasync import service as svc
+
+    monkeypatch.setattr(svc, "cached_candidate", lambda doc, sid: None)
+    bad = admin_client.post("/api/v1/data-updates", {"sources": ["hn-prices"]}, format="json").data["results"][0]
+    assert bad["status"] == "error" and "giá ca máy" in bad["message"]
+    assert DatasetRelease.objects.filter(kind="PRICE").count() == n_price
