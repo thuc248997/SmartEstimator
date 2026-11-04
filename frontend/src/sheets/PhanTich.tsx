@@ -3,6 +3,7 @@ import { AgGridReact } from "ag-grid-react";
 import type { ColDef, ColGroupDef } from "ag-grid-community";
 import { fmt, Revision, Run } from "../api";
 import { COL_LETTERS, xlTheme } from "../gridTheme";
+import { displayCode } from "./TongHopVatTu";
 
 type Row = { rid: string; head: boolean; stt?: number; code: string; name: string; unit: string; norm?: string; qty?: string; cons?: string; price?: string | null; amount?: number | null; source?: string | null; kind?: string };
 
@@ -26,7 +27,7 @@ export default function PhanTich({ revision, run }: { revision: Revision; run: R
             return;
           }
           const cons = Number(comp.consumption ?? 0);
-          out.push({ rid: `c${line.id}-${i}`, head: false, code: comp.resource_code ?? "", name: comp.name ?? comp.resource_code ?? "", unit: comp.unit ?? "",
+          out.push({ rid: `c${line.id}-${i}`, head: false, code: displayCode(comp.resource_code), name: comp.name ?? comp.resource_code ?? "", unit: comp.unit ?? "",
             norm: comp.norm_qty, qty: c.quantity, cons: comp.consumption, price: comp.price ?? null,
             amount: comp.price == null ? null : Math.round(cons * Number(comp.price)), source: comp.price_source, kind: comp.kind });
         });

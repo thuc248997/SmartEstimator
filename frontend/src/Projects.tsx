@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { api, CONSTRUCTION_TYPES, Page, Project, Release, RulePack } from "./api";
+import { api, CONSTRUCTION_TYPES, fmt, Page, Project, Release, RulePack } from "./api";
 import { errMsg, useToast } from "./ui";
 import DataUpdate from "./DataUpdate";
 
@@ -45,7 +45,7 @@ export default function Projects({ onLogout, initialTab = "open" }: { onLogout: 
                           <td><strong>{p.name}</strong>{p.code && <span className="doc-sub"> · {p.code}</span>}</td>
                           <td>{CONSTRUCTION_TYPES.find((c) => c[0] === p.construction_type)?.[1] ?? p.construction_type}</td>
                           <td>{p.region} · {p.price_period}</td>
-                          <td>{p.approved_construction_cost_bn ?? "—"}</td>
+                          <td>{p.approved_construction_cost_bn == null ? "—" : fmt.qty(p.approved_construction_cost_bn)}</td>
                           <td>{new Date(p.created_at).toLocaleDateString("vi-VN")}</td>
                         </tr>
                       ))}

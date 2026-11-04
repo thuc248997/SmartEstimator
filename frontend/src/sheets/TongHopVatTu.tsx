@@ -6,6 +6,8 @@ import TextEditor from "../TextEditor";
 import { COL_LETTERS, xlTheme } from "../gridTheme";
 
 type Row = { rid: string; head?: string; stt?: number; t?: ResourceTotal; amount?: number | null; note?: string };
+/** Mã nội bộ của nguồn lực bóc từ TT 38 (TT38.VL.<hash>) không có nghĩa với người dùng → ẩn. */
+export const displayCode = (c?: string | null) => (c && c.startsWith("TT38.") ? "" : c ?? "");
 const KINDS: [string, string][] = [["MATERIAL", "I. VẬT LIỆU"], ["LABOR", "II. NHÂN CÔNG"], ["MACHINE", "III. MÁY THI CÔNG"]];
 
 export default function TongHopVatTu({ run, locked, onOverride }: { run: Run | null; locked: boolean; onOverride(t: ResourceTotal, price: string): void }) {
@@ -34,7 +36,7 @@ export default function TongHopVatTu({ run, locked, onOverride }: { run: Run | n
 
   const cols: ColDef<Row>[] = [
     { headerName: "STT", width: 56, cellClass: "num", valueGetter: (p) => p.data?.stt ?? null },
-    { headerName: "Mã", width: 130, valueGetter: (p) => p.data?.head ?? p.data?.t?.resource_code, colSpan: (p) => (p.data?.head ? 4 : 1) },
+    { headerName: "Mã", width: 130, valueGetter: (p) => p.data?.head ?? displayCode(p.data?.t?.resource_code), colSpan: (p) => (p.data?.head ? 4 : 1) },
     { headerName: "Tên vật tư / nhân công / máy", flex: 1, minWidth: 260, valueGetter: (p) => p.data?.t?.name ?? p.data?.note,
       cellStyle: (p) => (p.data?.note ? { fontStyle: "italic", color: "#616161" } : null) },
     { headerName: "Đơn vị", width: 72, valueGetter: (p) => p.data?.t?.unit },

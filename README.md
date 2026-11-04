@@ -20,6 +20,7 @@ Thiết kế: [`g8-enterprise-webapp-architecture.md`](g8-enterprise-webapp-arch
 | Admin Django | https://smartestimator.around-ai.com/admin |
 
 Tài liệu liên quan:
+- **`docs/huong-dan-su-dung.md`: hướng dẫn sử dụng từng bước, có ảnh.**
 - `docs/g8-ui-analysis.md`: phân tích giao diện Dự toán G8 và so với SmartEstimator.
 - `docs/rule-pack-tt36-2026.md`: bảng tỷ lệ chi phí theo TT 36/2026.
 - `docs/data-dictionary.md`: từ điển dữ liệu.
@@ -83,48 +84,189 @@ Giới hạn hiện tại:
 - Vật liệu dạng "Vữa bê tông" chưa tự lấy giá theo cấp phối Phụ lục VII; phải nhập hoặc áp giá thông báo.
 - **QĐ 2075/QĐ-SXD (31/10/2026)** thay thế QĐ 2037 nhưng chưa tìm được tệp. Hệ thống hiện cảnh báo và tạm dùng bảng của QĐ 2037.
 
+## Kiến trúc hệ thống
+
+```mermaid
+flowchart LR
+    U([Người dùng<br/>trình duyệt]) -->|HTTPS| CF[Cloudflare Tunnel<br/>smartestimator.around-ai.com]
+    CF --> API
+
+    subgraph Docker Compose
+        API["api: Django + DRF (gunicorn)<br/>SPA React phục vụ ở /"]
+        W["worker: Celery<br/>tính dự toán lớn, cập nhật dữ liệu"]
+        DB[(PostgreSQL 16)]
+        R[(Redis 7)]
+        M[("media: Excel đã xuất,<br/>PDF nguồn (cache)")]
+    end
+
+    API --> DB
+    API --> R
+    R --> W
+    W --> DB
+    API --> M
+    W --> M
+    W -->|tải PDF| SRC[(Nguồn chính thức<br/>TT 38/2026 · Sở XD Hà Nội)]
+```
+
+## Cấu trúc mã nguồn
+
+```mermaid
+flowchart TB
+    subgraph FE["frontend/ — React 18 + TypeScript + AG Grid"]
+        direction LR
+        FE1[App / Login / Projects<br/>DataUpdate]
+        FE2[Workbook: ribbon, fx, tab sheet<br/>TraMa, menu chuột phải]
+        FE3[sheets/: TienLuong, PhanTich,<br/>TongHopVatTu, TongHopKinhPhi,<br/>TongHopChiPhiXD, ChiPhiThietBi, Bia]
+    end
+
+    subgraph BE["backend/apps — Django"]
+        direction TB
+        projects["projects<br/>Project · EstimateRevision · ProjectItem<br/>EstimateLine (diễn giải, giá tạm tính)<br/>ResourceOverride · EquipmentCost"]
+        calculation["calculation<br/>engine/ thuần Python, Decimal<br/>CalculationRun / Line · Celery task"]
+        catalog["catalog<br/>SourceDocument · DatasetRelease<br/>Resource · WorkItem · NormComponent"]
+        pricebook["pricebook<br/>PriceObservation (release · vùng · kỳ)"]
+        regulations["regulations<br/>CostRulePack TT 36/2026"]
+        datasync["datasync<br/>bóc tách TT 38 · giá Hà Nội<br/>DataUpdateRun · PriceCatalogItem"]
+        reports["reports<br/>Excel 8 sheet, công thức sống"]
+        audit["audit<br/>AuditEvent (append-only)"]
+    end
+
+    FE -->|REST /api/v1, Token| projects
+    FE --> catalog
+    FE --> datasync
+    projects --> calculation
+    calculation --> catalog
+    calculation --> pricebook
+    calculation --> regulations
+    reports --> calculation
+    datasync --> catalog
+    datasync --> pricebook
+    projects --> audit
+    datasync --> audit
+```
+
+| Thư mục | Nội dung |
+|---|---|
+| `backend/fixtures/` | `rule_pack_tt36_2026.json`, `data_sources.json` (nguồn cập nhật), `sample_catalog.json` (MẪU cho test) |
+| `backend/tests/` | `engine/` (golden, ngưỡng, hệ số 1,1, Knc/Km, determinism), `api/` (luồng đầy đủ), `datasync/` (bóc tách, cập nhật, lỗi nguồn) — 80 test |
+| `docs/` | `huong-dan-su-dung.md`, `g8-ui-analysis.md`, `rule-pack-tt36-2026.md`, `data-dictionary.md`, `images/` |
+
+### Mô hình dữ liệu chính
+
+```mermaid
+erDiagram
+    SourceDocument ||--o{ DatasetRelease : "căn cứ"
+    DatasetRelease ||--o{ WorkItem : "NORM"
+    DatasetRelease ||--o{ PriceObservation : "PRICE"
+    DatasetRelease ||--o{ PriceCatalogItem : "CATALOG"
+    WorkItem ||--o{ NormComponent : "hao phí"
+    Resource ||--o{ NormComponent : "nguồn lực"
+    Resource ||--o{ PriceObservation : "giá theo vùng/kỳ"
+    Project }o--|| DatasetRelease : "norm_release / price_release"
+    Project }o--|| CostRulePack : "rule_pack"
+    Project ||--o{ EstimateRevision : "bản dự toán"
+    EstimateRevision ||--o{ ProjectItem : "hạng mục"
+    ProjectItem ||--o{ EstimateLine : "công tác + diễn giải"
+    EstimateLine }o--o| WorkItem : "mã định mức / tạm tính"
+    EstimateRevision ||--o{ ResourceOverride : "giá riêng (có lý do)"
+    EstimateRevision ||--o{ EquipmentCost : "thiết bị"
+    EstimateRevision ||--o{ CalculationRun : "lần tính (hash)"
+    CalculationRun ||--o{ ReportArtifact : "Excel đã xuất"
+```
+
 ## Luồng API chính
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Người dùng / client
+    participant A as API /api/v1
+    participant E as Engine
+    participant DB as PostgreSQL
+
+    U->>A: POST /auth/token (username, password)
+    A-->>U: token
+    U->>A: GET /catalog/work-items?query=Bê tông,móng
+    U->>A: POST /projects (loại CT, norm_release, price_release, vùng, kỳ)
+    U->>A: POST /projects/{id}/revisions
+    U->>A: POST /revisions/{id}/items  (hạng mục)
+    U->>A: POST /revisions/{id}/lines  (mã, KL / công thức / details)
+    U->>A: PATCH /revisions/{id}/lines/{line} + version
+    alt version cũ
+        A-->>U: 409 — người khác đã sửa
+    end
+    U->>A: POST /revisions/{id}/overrides (giá riêng + lý do)
+    U->>A: POST /revisions/{id}/calculate
+    A->>DB: snapshot: dòng, định mức, giá, rule pack
+    A->>E: run(snapshot)
+    E-->>A: đơn giá 4.1–4.4, Bảng 3.8, cảnh báo, output_hash
+    A->>DB: CalculationRun + CalculationLine
+    A-->>U: kết quả + warnings
+    U->>A: GET /calculation-runs/{run}/explain?line_id=
+    U->>A: POST /revisions/{id}/approve (reason, force?)
+    alt còn MISSING_PRICE / mã sai và không force
+        A-->>U: 409 + danh sách cảnh báo
+    else
+        A->>DB: khóa snapshot + content_hash, audit
+    end
+    U->>A: POST /revisions/{id}/export?template=estimate-xlsx
+    A-->>U: file .xlsx (lưu ReportArtifact + sha256)
+```
+
+Các endpoint khác:
+- `POST /data-updates` (quản trị viên): kiểm tra và cập nhật dữ liệu. Xem trạng thái ở `GET /data-updates/{id}` và `GET /data-status`.
+- `GET /catalog/price-items?query=`: tra giá vật liệu công bố.
+- `POST /revisions/{id}/items/{item}/reorder`: sắp xếp lại công tác.
+- `POST|PATCH|DELETE /revisions/{id}/equipment`: chi phí thiết bị.
+
+<details><summary>Ví dụ gọi API bằng curl</summary>
+
 ```bash
-TOKEN=$(curl -s -X POST localhost:8000/api/v1/auth/token -d username=demo -d password=demo12345 | jq -r .token)
+TOKEN=$(curl -s -X POST localhost:8000/api/v1/auth/token -d username=demo -d password=<mật-khẩu> | jq -r .token)
 H="Authorization: Token $TOKEN"; J="Content-Type: application/json"
 
-curl -s -H "$H" "localhost:8000/api/v1/catalog/work-items?query=AF.12"          # tìm mã
-curl -s -H "$H" localhost:8000/api/v1/catalog/work-items/<id>/norms              # hao phí VL/NC/M
-curl -s -H "$H" "localhost:8000/api/v1/prices?resource__code=VL.XM&region=Hà%20Nội&period=2026-Q3"
-
+curl -s -H "$H" "localhost:8000/api/v1/catalog/work-items?query=AF.112"
 curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/projects -d '{
-  "name":"Nhà làm việc","region":"Hà Nội","price_period":"2026-Q3","construction_type":"CIVIL",
-  "rule_pack":1,"norm_release":1,"price_release":2,"approved_construction_cost_bn":"12"}'
+  "name":"Nhà làm việc","region":"Hà Nội - Vùng I","price_period":"2026-10","construction_type":"CIVIL",
+  "rule_pack":1,"norm_release":3,"price_release":4,"approved_construction_cost_bn":"12"}'
 curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/projects/1/revisions -d '{"title":"Lần 1"}'
-curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/revisions/1/items -d '{"name":"Phần thô","order":1}'
+curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/revisions/1/items -d '{"name":"Phần móng","order":1}'
 curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/revisions/1/lines -d '[
-  {"item":1,"order":1,"work_item":7,"quantity_expr":"2*(3.5+4.2)*0.22"},
-  {"item":1,"order":2,"work_item":4,"quantity":"15.5"}]'
-curl -s -H "$H" -X POST localhost:8000/api/v1/revisions/1/calculate                 # → run id, summary Bảng 3.8, warnings
-curl -s -H "$H" "localhost:8000/api/v1/calculation-runs/1/explain?line_id=1"       # cây giải trình 1 dòng
-curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/revisions/1/overrides -d '{"resource":1,"price":"1700","reason":"Báo giá NCC"}'
-curl -s -H "$H" -H "$J" -X POST localhost:8000/api/v1/revisions/1/approve -d '{"reason":"OK"}'   # khóa snapshot + hash
+  {"item":1,"order":1,"work_item":123,"details":[{"text":"Móng M1","expr":"1.2*1.8*0.5","n":"4"}]},
+  {"item":1,"order":2,"custom_code":"TT.01","name":"Tủ rack","unit":"bộ","quantity":"1","manual_vl":"15500000"}]'
+curl -s -H "$H" -X POST localhost:8000/api/v1/revisions/1/calculate
 curl -s -H "$H" -X POST "localhost:8000/api/v1/revisions/1/export?template=estimate-xlsx" -o du-toan.xlsx
 ```
+</details>
 
-Sửa dòng dùng optimistic lock: `PATCH /revisions/{id}/lines/{line_id}` với `"version"` hiện tại → `409` nếu người khác đã sửa.
-Revision đã `approved` không sửa được; tính lại dùng snapshot đã khóa nên `output_hash` không đổi dù giá gốc đổi. Approve bị chặn (`409`) khi còn cảnh báo thiếu giá/mã sai, trừ khi gửi `"force": true` (có audit).
+## Luồng tính (engine)
 
-## Cấu trúc
-
+```mermaid
+flowchart LR
+    L["Dòng công tác<br/>Q = số / công thức / Σ diễn giải"] --> UP
+    N["Định mức hao phí<br/>V, N, M (+ % khác)"] --> UP
+    G["Giá: bộ giá vùng/kỳ<br/>→ giá riêng (override)"] --> UP
+    UP["Đơn giá 4.1–4.4<br/>D_vl, D_nc, D_m<br/>(hoặc giá tạm tính)"] --> TT["Thành tiền<br/>Q×D_vl, Q×D_nc×Knc, Q×D_m×Km"]
+    TT --> T["T = VL + NC + M"]
+    T --> C["C: Bảng 3.3 (%T) / 3.4 (%NC)<br/>× 1,1 vùng núi/hải đảo"]
+    T --> TTK["TT: Bảng 3.5"]
+    C --> GT["GT = C + TT"]
+    TTK --> GT
+    GT --> TL["TL: Bảng 3.6 × (T+GT)"]
+    TL --> X["GXDTT → GTGT → GXD"]
+    X --> LT["Nhà tạm LT: Bảng 3.7"]
+    X --> HM["Tổng hợp theo hạng mục"]
 ```
-backend/apps/
-  catalog      SourceDocument, DatasetRelease, Resource, WorkItem, NormComponent  + loader + seed_sample
-  pricebook    PriceObservation (giá theo release/vùng/kỳ/nguồn/trạng thái duyệt)
-  regulations  CostRulePack (JSON bảng tỷ lệ TT 36/2026) + loader
-  projects     Project, EstimateRevision, ProjectItem, EstimateLine, ResourceOverride
-  calculation  engine/ (thuần Python, Decimal, deterministic) + CalculationRun/Line + Celery task
-  reports      Excel 5 sheet (ThamSo, TienLuong, PhanTichVatTu, TongHopVatTu, TongHopKinhPhi) công thức sống
-  audit        AuditEvent append-only
-backend/fixtures/  rule_pack_tt36_2026.json, sample_catalog.json
-backend/tests/     engine/ (golden, ngưỡng, hệ số 1,1, Knc/Km, determinism, parser), api/test_flow.py
-```
+
+## Hình ảnh
+
+| Tiên lượng (diễn giải khối lượng) | Tra mã chọn nhiều |
+|---|---|
+| ![](docs/images/04-tien-luong.png) | ![](docs/images/05-tra-ma.png) |
+| **Tổng hợp kinh phí (Bảng 3.8)** | **Cập nhật dữ liệu** |
+| ![](docs/images/10-tong-hop-kinh-phi.png) | ![](docs/images/16-du-lieu-cap-nhat.png) |
+
+Hướng dẫn từng bước có ảnh: **[docs/huong-dan-su-dung.md](docs/huong-dan-su-dung.md)**.
 
 ## Engine
 
