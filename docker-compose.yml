@@ -1,0 +1,99 @@
+# Dev/staging compose for SmartEstimator (modular monolith: Django API + Celery worker)
+# Production: put Nginx/Caddy + TLS in front, run gunicorn instead of runserver,
+# keep db/redis on the internal network only (see docs/README).
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    networks:
+      default:
+        aliases: [smartestimator-db]   # unique name: "db" also exists on the shared tunnel network
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-smartestimator}
+      POSTGRES_USER: ${POSTGRES_USER:-smartestimator}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smartestimator-dev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${HOST_DB_PORT:-5434}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-smartestimator} -d ${POSTGRES_DB:-smartestimator}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      default:
+        aliases: [smartestimator-redis]
+    ports:
+      - "127.0.0.1:${HOST_REDIS_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: smartestimator-db
+      REDIS_URL: redis://smartestimator-redis:6379/0
+    # Production-style serve (gunicorn + whitenoise). For live-reload dev use: make dev
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-3} --timeout 120 --access-logfile -"
+    volumes:
+      - ./backend:/app
+      - media:/app/media
+      - staticfiles:/app/staticfiles
+    ports:
+      - "127.0.0.1:${HOST_API_PORT:-8000}:8000"
+    networks:
+      default:
+      tunnel:
+        aliases: [smartestimator-api]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: smartestimator-db
+      REDIS_URL: redis://smartestimator-redis:6379/0
+    command: celery -A config worker -l info --concurrency=2
+    volumes:
+      - ./backend:/app
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  media:
+  staticfiles:
+
+networks:
+  default:
+  # Existing cloudflared tunnel (compose project "around-ai") lives on this network;
+  # it routes smartestimator.around-ai.com -> http://smartestimator-api:8000
+  tunnel:
+    name: around-ai_default
+    external: true

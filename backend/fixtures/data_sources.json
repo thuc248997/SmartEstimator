@@ -1,0 +1,47 @@
+{
+  "_doc": "Danh sách nguồn dữ liệu chính thức để nút 'Cập nhật dữ liệu' kiểm tra. Nguồn của Sở Xây dựng Hà Nội được dò tự động trên cổng soxaydung.hanoi.gov.vn; các mục 'mirrors' dưới đây bổ sung bản tải được khi Sở chưa đăng tệp (hệ thống luôn chọn văn bản có ngày ban hành mới nhất). Có thể đặt DATA_MANIFEST_URL để tải danh sách này từ xa.",
+  "manifest_version": "2026-11-04",
+  "sources": {
+    "tt38-2026": {
+      "mirrors": [
+        {
+          "url": "https://sxd.quangngai.gov.vn/upload/2006772/20260702/Thong-tu-38-2026-TT-BXD_a7b6b.pdf",
+          "issuer": "Bộ Xây dựng",
+          "number": "38/2026/TT-BXD",
+          "title": "Thông tư ban hành định mức xây dựng (8 phụ lục)",
+          "issued_on": "2026-06-26",
+          "effective_from": "2026-07-01",
+          "note": "Bản PDF chính thức (1.893 trang) đăng trên Cổng TTĐT Sở Xây dựng Quảng Ngãi"
+        }
+      ]
+    },
+    "hn-labor": {
+      "mirrors": [
+        {
+          "url": "https://dutoanescon.vn/tai-lieu/don-gia-nhan-cong-xay-dung-ha-noi-2026-2036-qd-sxd/download",
+          "issuer": "Sở Xây dựng Hà Nội",
+          "number": "2036/QĐ-SXD",
+          "issued_on": "2026-10-26",
+          "note": "Bản ký số QĐ 2036/QĐ-SXD (Sở chưa đăng tệp trên cổng); tải từ dutoanescon.vn"
+        }
+      ]
+    },
+    "hn-machine": {
+      "mirrors": [
+        {
+          "url": "https://dutoanescon.vn/tai-lieu/bang-gia-ca-may-va-thiet-bi-thi-cong-ha-noi-2026-qd-2037-qd-sxd/download",
+          "issuer": "Sở Xây dựng Hà Nội",
+          "number": "2037/QĐ-SXD",
+          "issued_on": "2026-10-26",
+          "note": "Bảng giá ca máy kèm QĐ 2037/QĐ-SXD (bản xuất Excel, không ký số). Có thông tin QĐ 2075/QĐ-SXD ngày 31/10/2026 thay thế QĐ 2037 — chưa tìm được tệp, cần bổ sung khi có."
+        }
+      ],
+      "known_newer": [
+        {"number": "2075/QĐ-SXD", "issued_on": "2026-10-31", "note": "Thay thế QĐ 2037/QĐ-SXD theo thuvienphapluat.vn; chưa có tệp tải về"}
+      ]
+    },
+    "hn-material": {
+      "mirrors": []
+    }
+  }
+}

@@ -1,0 +1,1889 @@
+{
+ "_warning": "DỮ LIỆU MẪU (SAMPLE) để chạy thử hệ thống. Mã, tên, hao phí và giá KHÔNG phải số liệu chính thức của Bộ Xây dựng/Sở Xây dựng. Không dùng cho hồ sơ thật.",
+ "release": {
+  "kind": "NORM",
+  "name": "SAMPLE định mức mô phỏng cấu trúc TT 38/2026",
+  "version": "0.1-sample",
+  "region": "VN",
+  "effective_from": "2026-07-01",
+  "is_sample": true,
+  "notes": "Cấu trúc mã/thành phần mô phỏng Phụ lục định mức xây dựng và lắp đặt; số liệu minh hoạ."
+ },
+ "price_release": {
+  "kind": "PRICE",
+  "name": "SAMPLE giá Hà Nội",
+  "version": "2026-Q3-sample",
+  "region": "Hà Nội",
+  "effective_from": "2026-07-01",
+  "is_sample": true,
+  "notes": "Giá minh hoạ, chưa VAT, giả định đã đến hiện trường."
+ },
+ "resources": [
+  {
+   "code": "VL.XM",
+   "kind": "MATERIAL",
+   "name": "Xi măng PC40",
+   "unit": "kg",
+   "spec": "PCB40",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAT.V",
+   "kind": "MATERIAL",
+   "name": "Cát vàng",
+   "unit": "m3",
+   "spec": "ML>2",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAT.M",
+   "kind": "MATERIAL",
+   "name": "Cát mịn",
+   "unit": "m3",
+   "spec": "ML 1,5-2",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.DA.1X2",
+   "kind": "MATERIAL",
+   "name": "Đá dăm 1x2",
+   "unit": "m3",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.DA.4X6",
+   "kind": "MATERIAL",
+   "name": "Đá dăm 4x6",
+   "unit": "m3",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.GACH.ONG",
+   "kind": "MATERIAL",
+   "name": "Gạch ống 8x8x19",
+   "unit": "viên",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.GACH.DAC",
+   "kind": "MATERIAL",
+   "name": "Gạch đặc 6,5x10,5x22",
+   "unit": "viên",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.THEP.D10",
+   "kind": "MATERIAL",
+   "name": "Thép tròn D≤10mm",
+   "unit": "kg",
+   "spec": "CB240-T",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.THEP.D18",
+   "kind": "MATERIAL",
+   "name": "Thép tròn D≤18mm",
+   "unit": "kg",
+   "spec": "CB300-V",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.DAY.THEP",
+   "kind": "MATERIAL",
+   "name": "Dây thép buộc 1mm",
+   "unit": "kg",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.NUOC",
+   "kind": "MATERIAL",
+   "name": "Nước",
+   "unit": "m3",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.GO.VK",
+   "kind": "MATERIAL",
+   "name": "Gỗ ván khuôn",
+   "unit": "m3",
+   "spec": "Nhóm VII",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.DINH",
+   "kind": "MATERIAL",
+   "name": "Đinh",
+   "unit": "kg",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.ONG.PVC20",
+   "kind": "MATERIAL",
+   "name": "Ống luồn dây PVC D20",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.ONG.PVC25",
+   "kind": "MATERIAL",
+   "name": "Ống luồn dây PVC D25",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.HOP.NOI",
+   "kind": "MATERIAL",
+   "name": "Hộp nối ống luồn dây",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAP.CU1.5",
+   "kind": "MATERIAL",
+   "name": "Cáp điện Cu/PVC 1x1,5mm2",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAP.CU2.5",
+   "kind": "MATERIAL",
+   "name": "Cáp điện Cu/PVC 1x2,5mm2",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAP.UTP5",
+   "kind": "MATERIAL",
+   "name": "Cáp mạng UTP Cat5e",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAP.UTP6",
+   "kind": "MATERIAL",
+   "name": "Cáp mạng UTP Cat6",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAP.RG6",
+   "kind": "MATERIAL",
+   "name": "Cáp đồng trục RG6",
+   "unit": "m",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.BANG.KEO",
+   "kind": "MATERIAL",
+   "name": "Băng keo cách điện",
+   "unit": "cuộn",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.O.CAM",
+   "kind": "MATERIAL",
+   "name": "Ổ cắm đôi âm tường",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CONG.TAC",
+   "kind": "MATERIAL",
+   "name": "Công tắc đơn âm tường",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.APTOMAT",
+   "kind": "MATERIAL",
+   "name": "Aptomat 1P 20A",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.TU.DIEN",
+   "kind": "MATERIAL",
+   "name": "Tủ điện âm tường 12 module",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.CAMERA",
+   "kind": "MATERIAL",
+   "name": "Camera IP dome 2MP",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.NVR",
+   "kind": "MATERIAL",
+   "name": "Đầu ghi hình NVR 8 kênh",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.RJ45",
+   "kind": "MATERIAL",
+   "name": "Đầu nối RJ45",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.O.MANG",
+   "kind": "MATERIAL",
+   "name": "Ổ cắm mạng đơn",
+   "unit": "cái",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.SON.LOT",
+   "kind": "MATERIAL",
+   "name": "Sơn lót nội thất",
+   "unit": "kg",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.SON.PHU",
+   "kind": "MATERIAL",
+   "name": "Sơn phủ nội thất",
+   "unit": "kg",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "VL.BOT.BA",
+   "kind": "MATERIAL",
+   "name": "Bột bả tường",
+   "unit": "kg",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "NC.3.0",
+   "kind": "LABOR",
+   "name": "Nhân công xây dựng 3,0/7",
+   "unit": "công",
+   "spec": "",
+   "labor_group": "1",
+   "labor_grade": "3.0"
+  },
+  {
+   "code": "NC.3.5",
+   "kind": "LABOR",
+   "name": "Nhân công xây dựng 3,5/7",
+   "unit": "công",
+   "spec": "",
+   "labor_group": "1",
+   "labor_grade": "3.5"
+  },
+  {
+   "code": "NC.4.0",
+   "kind": "LABOR",
+   "name": "Nhân công xây dựng 4,0/7",
+   "unit": "công",
+   "spec": "",
+   "labor_group": "1",
+   "labor_grade": "4.0"
+  },
+  {
+   "code": "NC.4.5",
+   "kind": "LABOR",
+   "name": "Nhân công lắp đặt điện 4,5/7",
+   "unit": "công",
+   "spec": "",
+   "labor_group": "2",
+   "labor_grade": "4.5"
+  },
+  {
+   "code": "M.TRON250",
+   "kind": "MACHINE",
+   "name": "Máy trộn bê tông 250L",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "M.DAM.DUI",
+   "kind": "MACHINE",
+   "name": "Máy đầm dùi 1,5kW",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "M.DAM.BAN",
+   "kind": "MACHINE",
+   "name": "Máy đầm bàn 1kW",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "M.CAT.UON",
+   "kind": "MACHINE",
+   "name": "Máy cắt uốn cốt thép 5kW",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "M.HAN",
+   "kind": "MACHINE",
+   "name": "Máy hàn điện 23kW",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "M.KHOAN",
+   "kind": "MACHINE",
+   "name": "Máy khoan điện 1,5kW",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  },
+  {
+   "code": "M.VAN.THANG",
+   "kind": "MACHINE",
+   "name": "Vận thăng 0,8T",
+   "unit": "ca",
+   "spec": "",
+   "labor_group": "",
+   "labor_grade": null
+  }
+ ],
+ "work_items": [
+  {
+   "code": "AB.11311",
+   "name": "Đào móng cột, trụ, hố kiểm tra bằng thủ công, đất cấp I",
+   "unit": "m3",
+   "group_code": "AB.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "NC.3.0",
+     "kind": "LABOR",
+     "quantity": "0.71"
+    }
+   ]
+  },
+  {
+   "code": "AB.11312",
+   "name": "Đào móng cột, trụ, hố kiểm tra bằng thủ công, đất cấp II",
+   "unit": "m3",
+   "group_code": "AB.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "NC.3.0",
+     "kind": "LABOR",
+     "quantity": "1.03"
+    }
+   ]
+  },
+  {
+   "code": "AB.13111",
+   "name": "Đắp đất nền móng công trình bằng thủ công, độ chặt K=0,90",
+   "unit": "m3",
+   "group_code": "AB.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "NC.3.0",
+     "kind": "LABOR",
+     "quantity": "0.58"
+    }
+   ]
+  },
+  {
+   "code": "AE.22211",
+   "name": "Xây tường gạch ống 8x8x19, chiều dày ≤30cm, cao ≤4m, vữa XM M75",
+   "unit": "m3",
+   "group_code": "AE.2",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.GACH.ONG",
+     "kind": "MATERIAL",
+     "quantity": "850"
+    },
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "51.3"
+    },
+    {
+     "resource": "VL.CAT.M",
+     "kind": "MATERIAL",
+     "quantity": "0.19"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.04"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "0.5",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "1.95"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.036"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.04"
+    }
+   ]
+  },
+  {
+   "code": "AE.22111",
+   "name": "Xây tường gạch đặc 6,5x10,5x22, chiều dày ≤33cm, cao ≤4m, vữa XM M75",
+   "unit": "m3",
+   "group_code": "AE.2",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.GACH.DAC",
+     "kind": "MATERIAL",
+     "quantity": "550"
+    },
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "78.6"
+    },
+    {
+     "resource": "VL.CAT.M",
+     "kind": "MATERIAL",
+     "quantity": "0.29"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.06"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "0.5",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "1.92"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.036"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.04"
+    }
+   ]
+  },
+  {
+   "code": "AF.11111",
+   "name": "Bê tông lót móng đá 4x6 M100, rộng ≤250cm",
+   "unit": "m3",
+   "group_code": "AF.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "207"
+    },
+    {
+     "resource": "VL.CAT.V",
+     "kind": "MATERIAL",
+     "quantity": "0.52"
+    },
+    {
+     "resource": "VL.DA.4X6",
+     "kind": "MATERIAL",
+     "quantity": "0.93"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.17"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.0",
+     "kind": "LABOR",
+     "quantity": "1.18"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.095"
+    },
+    {
+     "resource": "M.DAM.BAN",
+     "kind": "MACHINE",
+     "quantity": "0.089"
+    }
+   ]
+  },
+  {
+   "code": "AF.12111",
+   "name": "Bê tông móng đá 1x2 M200, rộng ≤250cm",
+   "unit": "m3",
+   "group_code": "AF.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "350"
+    },
+    {
+     "resource": "VL.CAT.V",
+     "kind": "MATERIAL",
+     "quantity": "0.48"
+    },
+    {
+     "resource": "VL.DA.1X2",
+     "kind": "MATERIAL",
+     "quantity": "0.86"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.19"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.0",
+     "kind": "LABOR",
+     "quantity": "1.64"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.095"
+    },
+    {
+     "resource": "M.DAM.DUI",
+     "kind": "MACHINE",
+     "quantity": "0.089"
+    }
+   ]
+  },
+  {
+   "code": "AF.12311",
+   "name": "Bê tông cột đá 1x2 M250, tiết diện ≤0,1m2, cao ≤4m",
+   "unit": "m3",
+   "group_code": "AF.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "415"
+    },
+    {
+     "resource": "VL.CAT.V",
+     "kind": "MATERIAL",
+     "quantity": "0.45"
+    },
+    {
+     "resource": "VL.DA.1X2",
+     "kind": "MATERIAL",
+     "quantity": "0.87"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.19"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "3.21"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.095"
+    },
+    {
+     "resource": "M.DAM.DUI",
+     "kind": "MACHINE",
+     "quantity": "0.18"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.11"
+    }
+   ]
+  },
+  {
+   "code": "AF.12411",
+   "name": "Bê tông dầm đá 1x2 M250",
+   "unit": "m3",
+   "group_code": "AF.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "415"
+    },
+    {
+     "resource": "VL.CAT.V",
+     "kind": "MATERIAL",
+     "quantity": "0.45"
+    },
+    {
+     "resource": "VL.DA.1X2",
+     "kind": "MATERIAL",
+     "quantity": "0.87"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.19"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "2.56"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.095"
+    },
+    {
+     "resource": "M.DAM.DUI",
+     "kind": "MACHINE",
+     "quantity": "0.18"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.11"
+    }
+   ]
+  },
+  {
+   "code": "AF.12511",
+   "name": "Bê tông sàn mái đá 1x2 M250",
+   "unit": "m3",
+   "group_code": "AF.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "415"
+    },
+    {
+     "resource": "VL.CAT.V",
+     "kind": "MATERIAL",
+     "quantity": "0.45"
+    },
+    {
+     "resource": "VL.DA.1X2",
+     "kind": "MATERIAL",
+     "quantity": "0.87"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.19"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "2.21"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.095"
+    },
+    {
+     "resource": "M.DAM.DUI",
+     "kind": "MACHINE",
+     "quantity": "0.18"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.11"
+    }
+   ]
+  },
+  {
+   "code": "AF.61111",
+   "name": "Cốt thép móng, đường kính ≤10mm",
+   "unit": "tấn",
+   "group_code": "AF.6",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.THEP.D10",
+     "kind": "MATERIAL",
+     "quantity": "1005"
+    },
+    {
+     "resource": "VL.DAY.THEP",
+     "kind": "MATERIAL",
+     "quantity": "21.42"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "10.5"
+    },
+    {
+     "resource": "M.CAT.UON",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    }
+   ]
+  },
+  {
+   "code": "AF.61121",
+   "name": "Cốt thép móng, đường kính ≤18mm",
+   "unit": "tấn",
+   "group_code": "AF.6",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.THEP.D18",
+     "kind": "MATERIAL",
+     "quantity": "1020"
+    },
+    {
+     "resource": "VL.DAY.THEP",
+     "kind": "MATERIAL",
+     "quantity": "14.28"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "7.5"
+    },
+    {
+     "resource": "M.CAT.UON",
+     "kind": "MACHINE",
+     "quantity": "0.32"
+    },
+    {
+     "resource": "M.HAN",
+     "kind": "MACHINE",
+     "quantity": "1.09"
+    }
+   ]
+  },
+  {
+   "code": "AF.61411",
+   "name": "Cốt thép cột, trụ, đường kính ≤10mm, cao ≤4m",
+   "unit": "tấn",
+   "group_code": "AF.6",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.THEP.D10",
+     "kind": "MATERIAL",
+     "quantity": "1005"
+    },
+    {
+     "resource": "VL.DAY.THEP",
+     "kind": "MATERIAL",
+     "quantity": "21.42"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "12.3"
+    },
+    {
+     "resource": "M.CAT.UON",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    }
+   ]
+  },
+  {
+   "code": "AF.61511",
+   "name": "Cốt thép dầm, đường kính ≤18mm, cao ≤4m",
+   "unit": "tấn",
+   "group_code": "AF.6",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.THEP.D18",
+     "kind": "MATERIAL",
+     "quantity": "1020"
+    },
+    {
+     "resource": "VL.DAY.THEP",
+     "kind": "MATERIAL",
+     "quantity": "14.28"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "9.8"
+    },
+    {
+     "resource": "M.CAT.UON",
+     "kind": "MACHINE",
+     "quantity": "0.32"
+    },
+    {
+     "resource": "M.HAN",
+     "kind": "MACHINE",
+     "quantity": "1.09"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    }
+   ]
+  },
+  {
+   "code": "AF.81111",
+   "name": "Ván khuôn gỗ móng",
+   "unit": "100m2",
+   "group_code": "AF.8",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.GO.VK",
+     "kind": "MATERIAL",
+     "quantity": "0.79"
+    },
+    {
+     "resource": "VL.DINH",
+     "kind": "MATERIAL",
+     "quantity": "12"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "20.5"
+    }
+   ]
+  },
+  {
+   "code": "AF.82111",
+   "name": "Ván khuôn gỗ cột vuông, chữ nhật, cao ≤4m",
+   "unit": "100m2",
+   "group_code": "AF.8",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.GO.VK",
+     "kind": "MATERIAL",
+     "quantity": "0.92"
+    },
+    {
+     "resource": "VL.DINH",
+     "kind": "MATERIAL",
+     "quantity": "14"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.4.0",
+     "kind": "LABOR",
+     "quantity": "28.9"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    }
+   ]
+  },
+  {
+   "code": "AF.82311",
+   "name": "Ván khuôn gỗ dầm, cao ≤4m",
+   "unit": "100m2",
+   "group_code": "AF.8",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.GO.VK",
+     "kind": "MATERIAL",
+     "quantity": "0.98"
+    },
+    {
+     "resource": "VL.DINH",
+     "kind": "MATERIAL",
+     "quantity": "15"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.4.0",
+     "kind": "LABOR",
+     "quantity": "31.2"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    }
+   ]
+  },
+  {
+   "code": "AF.82411",
+   "name": "Ván khuôn gỗ sàn mái, cao ≤4m",
+   "unit": "100m2",
+   "group_code": "AF.8",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.GO.VK",
+     "kind": "MATERIAL",
+     "quantity": "0.86"
+    },
+    {
+     "resource": "VL.DINH",
+     "kind": "MATERIAL",
+     "quantity": "13"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "1",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.4.0",
+     "kind": "LABOR",
+     "quantity": "24.1"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.4"
+    }
+   ]
+  },
+  {
+   "code": "AK.21111",
+   "name": "Trát tường trong, dày 1,5cm, vữa XM M75",
+   "unit": "m2",
+   "group_code": "AK.2",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "4.76"
+    },
+    {
+     "resource": "VL.CAT.M",
+     "kind": "MATERIAL",
+     "quantity": "0.018"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.004"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "0.2"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.003"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.003"
+    }
+   ]
+  },
+  {
+   "code": "AK.21211",
+   "name": "Trát tường ngoài, dày 1,5cm, vữa XM M75",
+   "unit": "m2",
+   "group_code": "AK.2",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.XM",
+     "kind": "MATERIAL",
+     "quantity": "4.76"
+    },
+    {
+     "resource": "VL.CAT.M",
+     "kind": "MATERIAL",
+     "quantity": "0.018"
+    },
+    {
+     "resource": "VL.NUOC",
+     "kind": "MATERIAL",
+     "quantity": "0.004"
+    },
+    {
+     "resource": "NC.4.0",
+     "kind": "LABOR",
+     "quantity": "0.26"
+    },
+    {
+     "resource": "M.TRON250",
+     "kind": "MACHINE",
+     "quantity": "0.003"
+    },
+    {
+     "resource": "M.VAN.THANG",
+     "kind": "MACHINE",
+     "quantity": "0.003"
+    }
+   ]
+  },
+  {
+   "code": "AK.82111",
+   "name": "Bả bằng bột bả vào tường",
+   "unit": "m2",
+   "group_code": "AK.8",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.BOT.BA",
+     "kind": "MATERIAL",
+     "quantity": "1.1"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "0.09"
+    }
+   ]
+  },
+  {
+   "code": "AK.84111",
+   "name": "Sơn tường trong nhà 1 nước lót, 2 nước phủ",
+   "unit": "m2",
+   "group_code": "AK.8",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.SON.LOT",
+     "kind": "MATERIAL",
+     "quantity": "0.1"
+    },
+    {
+     "resource": "VL.SON.PHU",
+     "kind": "MATERIAL",
+     "quantity": "0.25"
+    },
+    {
+     "resource": "NC.3.5",
+     "kind": "LABOR",
+     "quantity": "0.065"
+    }
+   ]
+  },
+  {
+   "code": "BA.11111",
+   "name": "Lắp đặt ống luồn dây PVC D20 chìm tường",
+   "unit": "100m",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.ONG.PVC20",
+     "kind": "MATERIAL",
+     "quantity": "102"
+    },
+    {
+     "resource": "VL.HOP.NOI",
+     "kind": "MATERIAL",
+     "quantity": "5"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "2",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "4.5"
+    },
+    {
+     "resource": "M.KHOAN",
+     "kind": "MACHINE",
+     "quantity": "0.5"
+    }
+   ]
+  },
+  {
+   "code": "BA.11121",
+   "name": "Lắp đặt ống luồn dây PVC D25 chìm tường",
+   "unit": "100m",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.ONG.PVC25",
+     "kind": "MATERIAL",
+     "quantity": "102"
+    },
+    {
+     "resource": "VL.HOP.NOI",
+     "kind": "MATERIAL",
+     "quantity": "5"
+    },
+    {
+     "kind": "MATERIAL",
+     "quantity": "2",
+     "is_other_pct": true
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "4.9"
+    },
+    {
+     "resource": "M.KHOAN",
+     "kind": "MACHINE",
+     "quantity": "0.5"
+    }
+   ]
+  },
+  {
+   "code": "BA.13111",
+   "name": "Kéo rải cáp điện Cu/PVC 1x1,5mm2 trong ống",
+   "unit": "100m",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CAP.CU1.5",
+     "kind": "MATERIAL",
+     "quantity": "102"
+    },
+    {
+     "resource": "VL.BANG.KEO",
+     "kind": "MATERIAL",
+     "quantity": "0.5"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "1.2"
+    }
+   ]
+  },
+  {
+   "code": "BA.13121",
+   "name": "Kéo rải cáp điện Cu/PVC 1x2,5mm2 trong ống",
+   "unit": "100m",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CAP.CU2.5",
+     "kind": "MATERIAL",
+     "quantity": "102"
+    },
+    {
+     "resource": "VL.BANG.KEO",
+     "kind": "MATERIAL",
+     "quantity": "0.5"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "1.35"
+    }
+   ]
+  },
+  {
+   "code": "BA.15111",
+   "name": "Lắp đặt ổ cắm đôi âm tường",
+   "unit": "cái",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.O.CAM",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "0.25"
+    }
+   ]
+  },
+  {
+   "code": "BA.15211",
+   "name": "Lắp đặt công tắc đơn âm tường",
+   "unit": "cái",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CONG.TAC",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "0.2"
+    }
+   ]
+  },
+  {
+   "code": "BA.16111",
+   "name": "Lắp đặt aptomat 1 pha ≤50A",
+   "unit": "cái",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.APTOMAT",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "0.3"
+    }
+   ]
+  },
+  {
+   "code": "BA.17111",
+   "name": "Lắp đặt tủ điện âm tường 12 module",
+   "unit": "cái",
+   "group_code": "BA.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.TU.DIEN",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "2.0"
+    },
+    {
+     "resource": "M.KHOAN",
+     "kind": "MACHINE",
+     "quantity": "0.2"
+    }
+   ]
+  },
+  {
+   "code": "BB.11111",
+   "name": "Kéo rải cáp mạng UTP Cat5e trong ống",
+   "unit": "100m",
+   "group_code": "BB.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CAP.UTP5",
+     "kind": "MATERIAL",
+     "quantity": "103"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "1.5"
+    }
+   ]
+  },
+  {
+   "code": "BB.11121",
+   "name": "Kéo rải cáp mạng UTP Cat6 trong ống",
+   "unit": "100m",
+   "group_code": "BB.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CAP.UTP6",
+     "kind": "MATERIAL",
+     "quantity": "103"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "1.6"
+    }
+   ]
+  },
+  {
+   "code": "BB.12111",
+   "name": "Lắp đặt ổ cắm mạng, bấm đầu RJ45",
+   "unit": "cái",
+   "group_code": "BB.1",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.O.MANG",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "VL.RJ45",
+     "kind": "MATERIAL",
+     "quantity": "2"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "0.35"
+    }
+   ]
+  },
+  {
+   "code": "BB.21111",
+   "name": "Kéo rải cáp đồng trục RG6 trong ống",
+   "unit": "100m",
+   "group_code": "BB.2",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CAP.RG6",
+     "kind": "MATERIAL",
+     "quantity": "103"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "1.4"
+    }
+   ]
+  },
+  {
+   "code": "BB.31111",
+   "name": "Lắp đặt camera IP dome",
+   "unit": "cái",
+   "group_code": "BB.3",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.CAMERA",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "VL.RJ45",
+     "kind": "MATERIAL",
+     "quantity": "2"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "1.2"
+    },
+    {
+     "resource": "M.KHOAN",
+     "kind": "MACHINE",
+     "quantity": "0.15"
+    }
+   ]
+  },
+  {
+   "code": "BB.31211",
+   "name": "Lắp đặt đầu ghi hình NVR 8 kênh",
+   "unit": "cái",
+   "group_code": "BB.3",
+   "notes": "",
+   "components": [
+    {
+     "resource": "VL.NVR",
+     "kind": "MATERIAL",
+     "quantity": "1"
+    },
+    {
+     "resource": "NC.4.5",
+     "kind": "LABOR",
+     "quantity": "2.5"
+    }
+   ]
+  }
+ ],
+ "prices": [
+  {
+   "resource": "VL.XM",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "1650",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAT.V",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "420000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAT.M",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "280000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.DA.1X2",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "380000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.DA.4X6",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "330000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.GACH.ONG",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "1350",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.GACH.DAC",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "1600",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.THEP.D10",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "15200",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.THEP.D18",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "14900",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.DAY.THEP",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "18000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.NUOC",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "12000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.GO.VK",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "4200000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.DINH",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "22000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.ONG.PVC20",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "6500",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.ONG.PVC25",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "8200",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.HOP.NOI",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "6000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAP.CU1.5",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "7800",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAP.CU2.5",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "12500",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAP.UTP5",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "6000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAP.UTP6",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "9500",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAP.RG6",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "7000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.BANG.KEO",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "8000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.O.CAM",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "65000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CONG.TAC",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "45000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.APTOMAT",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "95000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.TU.DIEN",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "480000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.CAMERA",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "1250000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.NVR",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "3900000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.RJ45",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "2500",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.O.MANG",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "85000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.SON.LOT",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "55000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.SON.PHU",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "72000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "VL.BOT.BA",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "9500",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "NC.3.0",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "260000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "NC.3.5",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "285000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "NC.4.0",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "310000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "NC.4.5",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "335000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.TRON250",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "290000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.DAM.DUI",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "230000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.DAM.BAN",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "210000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.CAT.UON",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "240000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.HAN",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "320000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.KHOAN",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "130000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  },
+  {
+   "resource": "M.VAN.THANG",
+   "region": "Hà Nội",
+   "period": "2026-Q3",
+   "price": "450000",
+   "source_kind": "SURVEY",
+   "status": "approved"
+  }
+ ]
+}

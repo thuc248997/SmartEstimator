@@ -1,0 +1,97 @@
+{
+  "code": "TT36-2026",
+  "version": "1.0",
+  "title": "Định mức tỷ lệ chi phí theo Phụ lục III Thông tư 36/2026/TT-BXD (bản 26/06/2026, chưa áp dụng đính chính QĐ 1538/QĐ-BXD)",
+  "source": {
+    "issuer": "Bộ Xây dựng",
+    "number": "36/2026/TT-BXD",
+    "title": "Thông tư hướng dẫn một số nội dung, phương pháp xác định và quản lý chi phí đầu tư xây dựng",
+    "url": "https://cdn.thuvienphapluat.vn/uploads/khoinghiep/2026/06/29/Ph%E1%BB%A5-l%E1%BB%A5c-Th%C3%B4ng-t%C6%B0-36-2026-TT-BXD.pdf",
+    "issued_on": "2026-06-26",
+    "effective_from": "2026-07-01",
+    "errata_status": "Đính chính QĐ 1538/QĐ-BXD ngày 28/08/2026 và VBHN 89/2026/VBHN-TT-BXD chưa được đối chiếu vào bản này",
+    "needs_review_errata": true
+  },
+  "review": {
+    "status": "EXTRACTED_FROM_OFFICIAL_PDF",
+    "note": "Số liệu trích trực tiếp từ PDF phụ lục bằng pdftotext ngày 2026-11-04. Chưa được kỹ sư dự toán ký duyệt. VAT và làm tròn là tham số cần xác nhận."
+  },
+  "vat_rate": "0.10",
+  "vat_note": "Thông tư chỉ ghi 'TGTGT: mức thuế suất thuế GTGT quy định cho công tác xây dựng'. 10% là giả định mặc định, cần xác nhận theo thời điểm lập.",
+  "remote_area_coeff": "1.1",
+  "remote_area_note": "Mục 3.1.4 Phụ lục III: vùng núi, biên giới, trên biển và hải đảo → định mức chi phí chung Bảng 3.2/3.3/3.4 nhân 1,1",
+  "overhead_direct": {
+    "citation": "Bảng 3.3 Phụ lục III – định mức chi phí chung (%) trên chi phí trực tiếp, theo chi phí XD trước thuế của công trình trong TMĐT được duyệt (tỷ đồng). Không nội suy.",
+    "thresholds_bn": ["40", "60", "100", "300", "500", "750", "1000"],
+    "rows": {
+      "CIVIL":            ["7.3", "7.1", "6.7", "6.5", "6.2", "6.1", "6.0", "5.8"],
+      "HERITAGE":         ["11.6", "11.1", "10.3", "10.1", "9.9", "9.8", "9.6", "9.4"],
+      "INDUSTRIAL":       ["6.2", "6.0", "5.6", "5.3", "5.1", "5.0", "4.9", "4.6"],
+      "HYDRO_TUNNEL":     ["7.3", "7.2", "7.1", "6.9", "6.7", "6.6", "6.5", "6.4"],
+      "TRANSPORT":        ["6.2", "6.0", "5.6", "5.3", "5.1", "5.0", "4.9", "4.6"],
+      "TRANSPORT_TUNNEL": ["7.3", "7.2", "7.1", "6.9", "6.7", "6.6", "6.5", "6.4"],
+      "AGRI_ENV":         ["6.1", "5.9", "5.5", "5.3", "5.1", "5.0", "4.8", "4.6"],
+      "AGRI_TUNNEL":      ["7.3", "7.2", "7.1", "6.9", "6.7", "6.6", "6.5", "6.4"],
+      "INFRA":            ["5.5", "5.3", "5.0", "4.8", "4.5", "4.4", "4.3", "4.0"]
+    },
+    "feasibility_report_only_column": 0
+  },
+  "overhead_labor": {
+    "citation": "Bảng 3.4 Phụ lục III – định mức chi phí chung (%) trên chi phí nhân công, theo chi phí NC trong chi phí trực tiếp (tỷ đồng)",
+    "thresholds_bn": ["15", "50", "100"],
+    "rows": {
+      "ROAD_RAIL_MAINTENANCE": ["66", "63", "60", "56"],
+      "AGRI_ENV_MANUAL":       ["51", "48", "45", "42"],
+      "EQUIPMENT_INSTALL":     ["65", "62", "59", "55"]
+    }
+  },
+  "unquantified_work": {
+    "citation": "Bảng 3.5 Phụ lục III – chi phí một số công việc không xác định được khối lượng từ thiết kế (%) trên chi phí trực tiếp",
+    "rows": {
+      "CIVIL": "2.5",
+      "HERITAGE": "2.5",
+      "INDUSTRIAL": "2.0",
+      "HYDRO_TUNNEL": "6.5",
+      "TRANSPORT": "2.0",
+      "TRANSPORT_TUNNEL": "6.5",
+      "AGRI_ENV": "2.0",
+      "AGRI_TUNNEL": "6.5",
+      "INFRA": "2.0",
+      "EQUIPMENT_INSTALL": "2.0"
+    },
+    "note": "HERITAGE lấy theo dân dụng, EQUIPMENT_INSTALL lấy theo công nghiệp (bảng không có dòng riêng) – cần kỹ sư xác nhận"
+  },
+  "taxable_income": {
+    "citation": "Bảng 3.6 Phụ lục III – thu nhập chịu thuế tính trước (%) trên (chi phí trực tiếp + chi phí gián tiếp)",
+    "rows": {
+      "CIVIL": "5.5",
+      "HERITAGE": "5.5",
+      "INDUSTRIAL": "6.0",
+      "HYDRO_TUNNEL": "6.0",
+      "TRANSPORT": "6.0",
+      "TRANSPORT_TUNNEL": "6.0",
+      "AGRI_ENV": "5.5",
+      "AGRI_TUNNEL": "5.5",
+      "INFRA": "5.5",
+      "EQUIPMENT_INSTALL": "6.0"
+    },
+    "self_quarry_rate": "3.0"
+  },
+  "temp_housing": {
+    "citation": "Bảng 3.7 Phụ lục III – chi phí nhà tạm để ở và điều hành thi công (%) trên chi phí xây dựng, theo chi phí XD trước thuế trong TMĐT (tỷ đồng)",
+    "thresholds_bn": ["15", "100", "500", "1000"],
+    "rows": {
+      "LINEAR": ["2.2", "2.0", "1.9", "1.8", "1.7"],
+      "OTHER":  ["1.1", "1.0", "0.95", "0.9", "0.85"]
+    },
+    "formula_note": "Bảng 3.8 ghi 'GXDTT x Tỷ lệ x TGTGT'. Engine hiểu là LT trước thuế = GXDTT × tỷ lệ, LT sau thuế = LT × (1 + TGTGT). Cần xác nhận cách hiểu."
+  },
+  "rounding": {
+    "quantity": 3,
+    "norm_consumption": 4,
+    "unit_price": 0,
+    "amount": 0,
+    "mode": "ROUND_HALF_UP",
+    "note": "Mặc định của hệ thống, văn bản không quy định. Cần kỹ sư dự toán duyệt."
+  }
+}
