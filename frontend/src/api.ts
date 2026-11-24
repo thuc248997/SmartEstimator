@@ -198,5 +198,8 @@ export interface AutoPrices {
   applied: { code: string; name: string; unit: string; price: string; source: string }[];
   ambiguous: { code: string; name: string; unit: string; options: string[] }[];
   not_found: { code: string; name: string; unit: string }[];
+  catalogs?: string[];
+  lines_filled?: { name: string; unit: string; price: string; source: string }[];
+  equipment_filled?: { name: string; unit: string; price: string; source: string }[];
   run?: Run;
 }

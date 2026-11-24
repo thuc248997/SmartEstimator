@@ -171,8 +171,17 @@ def commit(revision: EstimateRevision, payload: dict, user) -> dict:
     errors = []
     created_items = 0
     lines_payload: list[dict] = []
-    stats = {"matched": 0, "custom": 0, "converted": 0, "equipment": 0, "install_lines": 0, "equipment_unpriced": 0}
+    stats = {
+        "matched": 0,
+        "custom": 0,
+        "converted": 0,
+        "equipment": 0,
+        "install_lines": 0,
+        "equipment_unpriced": 0,
+        "equipment_existing": 0,
+    }
     eq_order = revision.equipment.aggregate(m=Max("order"))["m"] or 0
+    existing_eq = list(revision.equipment.filter(note__startswith="BoQ"))
     install_wis: set[int] = set()
     memories: list[tuple[str, str, int]] = []
     for i, it in enumerate(items_in, 1):
@@ -201,20 +210,33 @@ def commit(revision: EstimateRevision, payload: dict, user) -> dict:
                 except Exception:  # noqa: BLE001
                     errors.append(f"{bname[:40]}: đơn giá thiết bị “{ln.get('unit_price')}” không hợp lệ")
                     continue
-                if price is None or price < 0:
-                    stats["equipment_unpriced"] += 1
-                eq_order += 1
-                EquipmentCost.objects.create(
-                    revision=revision,
-                    order=eq_order,
-                    name=f"{bname} [{name}]"[:500] if name else bname[:500],
-                    unit=bunit[:30],
-                    quantity=qty_d.quantize(Decimal("0.001")),
-                    unit_price=price if price is not None and price >= 0 else Decimal(0),
-                    note=(f"BoQ dòng {row}" if row else "BoQ")
-                    + ("" if price else " — chưa có đơn giá, nhập theo báo giá"),
+                eq_name = f"{bname} [{name}]"[:500] if name else bname[:500]
+                eq_qty = qty_d.quantize(Decimal("0.001"))
+                # Nhập lại cùng file: thiết bị đã có (cùng tên + hạng mục, đơn vị, số lượng) → không thêm lần nữa;
+                # nếu lần này có đơn giá mà dòng cũ chưa có thì cập nhật giá
+                existing = next(
+                    (e for e in existing_eq if (e.name, e.unit, e.quantity) == (eq_name, bunit[:30], eq_qty)), None
                 )
-                stats["equipment"] += 1
+                if existing is not None:
+                    existing_eq.remove(existing)
+                    if price and not existing.unit_price:
+                        EquipmentCost.objects.filter(pk=existing.pk).update(unit_price=price)
+                    stats["equipment_existing"] += 1
+                else:
+                    if price is None or price < 0:
+                        stats["equipment_unpriced"] += 1
+                    eq_order += 1
+                    EquipmentCost.objects.create(
+                        revision=revision,
+                        order=eq_order,
+                        name=eq_name,
+                        unit=bunit[:30],
+                        quantity=eq_qty,
+                        unit_price=price if price is not None and price >= 0 else Decimal(0),
+                        note=(f"BoQ dòng {row}" if row else "BoQ")
+                        + ("" if price else " — chưa có đơn giá, nhập theo báo giá"),
+                    )
+                    stats["equipment"] += 1
                 if wi is None:
                     continue
                 note = f"Công lắp đặt thiết bị — {note}"[:500]

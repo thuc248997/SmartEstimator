@@ -689,7 +689,7 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
           </div><div className="label">Công trình</div></div>
           <div className="rgroup"><div className="btns">
             <button className="rbtn primary" onClick={() => setDialog({ kind: "data" })}><span className="ico">🔄</span>Cập nhật<br />dữ liệu</button>
-            <button className="rbtn" disabled={locked || !lineCount} title="Áp giá vật liệu còn thiếu từ công bố giá địa phương khi tên và đơn vị khớp rõ (ghi nguồn)" onClick={autoPrices}><span className="ico">🏷️</span>Tự áp giá<br />VL công bố</button>
+            <button className="rbtn" disabled={locked || !lineCount} title="Điền giá còn thiếu (vật liệu, dòng tạm tính, thiết bị) từ công bố giá địa phương rồi bảng giá tham khảo (F1) khi tên và đơn vị khớp rõ; ghi nguồn, không ghi đè" onClick={autoPrices}><span className="ico">🏷️</span>Tự áp giá<br />còn thiếu</button>
           </div><div className="label">Định mức & giá</div></div>
           <div className="rgroup"><div className="btns">
             <button className="rbtn" onClick={() => setSheet("thkp")}><span className="ico">📊</span>THKP<br />hạng mục</button>
@@ -806,23 +806,28 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
             })();
             const parts = [`${r.lines_created} dòng tiên lượng (${r.matched} có mã định mức${r.install_lines ? `, trong đó ${r.install_lines} dòng công lắp đặt` : ""}${r.converted ? `, ${r.converted} dòng quy đổi đơn vị` : ""}${r.custom ? `, ${r.custom} tạm tính cần nhập giá` : ""})`];
             if (r.equipment) parts.push(`${r.equipment} thiết bị vào sheet Chi phí thiết bị${r.equipment_unpriced ? ` (${r.equipment_unpriced} chưa có đơn giá)` : ""}`);
-            if (r.prices?.applied.length) parts.push(`tự áp giá ${r.prices.applied.length} vật liệu từ công bố giá`);
+            const nPrice = (r.prices?.applied.length ?? 0) + (r.prices?.lines_filled?.length ?? 0) + (r.prices?.equipment_filled?.length ?? 0);
+            if (nPrice) parts.push(`tự điền ${nPrice} giá từ bảng giá vật tư`);
             toast(`Đã nhập ${parts.join("; ")}. Dự toán đã được tính.`);
-            if (r.prices && (r.prices.applied.length || r.prices.ambiguous.length || r.prices.not_found.length)) setDialog({ kind: "prices", r: r.prices });
+            if (r.prices && (r.prices.applied.length || r.prices.ambiguous.length || r.prices.not_found.length || r.prices.lines_filled?.length || r.prices.equipment_filled?.length)) setDialog({ kind: "prices", r: r.prices });
           }} />
       )}
       {dialog?.kind === "prices" && (
-        <Modal title="Tự áp giá vật liệu từ công bố giá" wide onClose={() => setDialog(null)}
+        <Modal title="Tự áp giá còn thiếu từ bảng giá vật tư" wide onClose={() => setDialog(null)}
           footer={<button className="btn primary" onClick={() => setDialog(null)}>Đóng</button>}>
           <div className="boq-review">
-            <p>Nguồn: <b>{dialog.r.catalog ?? "không có bảng công bố giá phù hợp với địa phương của công trình"}</b>. Giá tự áp được lưu thành giá riêng của bản dự toán (có ghi nguồn), xem / sửa ở sheet <b>Tổng hợp vật tư</b>.</p>
-            {dialog.r.applied.length > 0 && <><b>Đã áp ({dialog.r.applied.length})</b>
+            <p>Nguồn (theo thứ tự ưu tiên): <b>{(dialog.r.catalogs ?? []).join(" → ") || dialog.r.catalog || "không có bảng giá phù hợp với địa phương của công trình"}</b>. Chỉ điền chỗ còn trống, không ghi đè giá đã nhập; mỗi giá đều ghi nguồn (xem ở Tổng hợp vật tư, cột Ghi chú của dòng, sheet Chi phí thiết bị).</p>
+            {(dialog.r.lines_filled?.length ?? 0) > 0 && <><b>Dòng tạm tính được điền đơn giá vật liệu ({dialog.r.lines_filled!.length})</b>
+              <table className="boq-table"><tbody>{dialog.r.lines_filled!.map((a, i) => <tr key={i}><td>{a.name}</td><td>{a.unit}</td><td className="num">{fmt.money(a.price)}</td><td><small className="muted">{a.source}</small></td></tr>)}</tbody></table></>}
+            {(dialog.r.equipment_filled?.length ?? 0) > 0 && <><b>Thiết bị được điền đơn giá ({dialog.r.equipment_filled!.length})</b>
+              <table className="boq-table"><tbody>{dialog.r.equipment_filled!.map((a, i) => <tr key={i}><td>{a.name}</td><td>{a.unit}</td><td className="num">{fmt.money(a.price)}</td><td><small className="muted">{a.source}</small></td></tr>)}</tbody></table></>}
+            {dialog.r.applied.length > 0 && <><b>Vật liệu trong định mức đã áp giá ({dialog.r.applied.length})</b>
               <table className="boq-table"><tbody>{dialog.r.applied.map((a) => <tr key={a.code}><td>{a.name}</td><td>{a.unit}</td><td className="num">{fmt.money(a.price)}</td><td><small className="muted">{a.source}</small></td></tr>)}</tbody></table></>}
             {dialog.r.ambiguous.length > 0 && <><b className="st-warn-t">Có nhiều giá, chưa áp — chọn tay ở Tổng hợp vật tư ({dialog.r.ambiguous.length})</b>
               <table className="boq-table"><tbody>{dialog.r.ambiguous.map((a) => <tr key={a.code}><td>{a.name}</td><td>{a.unit}</td><td>{a.options.map((o) => fmt.money(o)).join(" / ")}</td></tr>)}</tbody></table></>}
             {dialog.r.not_found.length > 0 && <><b className="st-err-t">Không có trong công bố giá — nhập giá tay ({dialog.r.not_found.length})</b>
               <table className="boq-table"><tbody>{dialog.r.not_found.map((a) => <tr key={a.code}><td>{a.name}</td><td>{a.unit}</td></tr>)}</tbody></table></>}
-            {!dialog.r.applied.length && !dialog.r.ambiguous.length && !dialog.r.not_found.length && <p>Mọi vật liệu đã có giá.</p>}
+            {!dialog.r.applied.length && !dialog.r.ambiguous.length && !dialog.r.not_found.length && !dialog.r.lines_filled?.length && !dialog.r.equipment_filled?.length && <p>Không còn chỗ trống nào điền được từ các bảng giá.</p>}
           </div>
         </Modal>
       )}

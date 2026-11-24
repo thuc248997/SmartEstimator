@@ -91,7 +91,35 @@ API được giả lập bằng dữ liệu xem trước thật lấy từ mục
 6. **Công lắp đặt tính theo hao phí TT 38 đang nạp.** Ví dụ lắp ống nhựa chìm 0,11 công/m, lắp camera ≈ 1,09 triệu/cái. Nên đối chiếu với bản giấy.
 7. **Chưa kiểm thử giao diện trên bản chạy thật.** Bước tạo token đăng nhập cho tài khoản demo bị chặn.
 
-## 6. Cách chạy lại
+## 6. Bổ sung 24/11/2026 (tối) — giá từ dự toán F1, chống nhân đôi thiết bị
+
+Kết quả kiểm tra:
+
+| Hạng mục | Kết quả |
+|---|---|
+| Test backend | **112 / 112 pass** |
+| Test mới | `test_f1_import_and_fill_custom_lines_and_equipment` |
+| Test mở rộng | `test_equipment_goes_to_equipment_cost_with_install_line` (thêm bước nhập lại) |
+| Ruff, TypeScript | Không lỗi |
+
+Test F1 kiểm tra:
+- đọc sheet "Vật liệu" và kỳ giá; bỏ dòng giá 0 / %;
+- quy đổi km → m;
+- không ghi đè giá đã nhập;
+- không ghép "Ổ cắm mạng" với "Ổ cắm thoại";
+- khớp vật liệu gần đúng theo tiền tố khi mọi quy cách cùng một giá.
+
+Test nhập lại kiểm tra: nhập lại cùng file thì 0 thiết bị mới.
+
+Áp lên dữ liệu thật:
+- Nạp `Dự toán-THPT Thien Loc-FINAL.xlsm` được 46 vật tư có giá (bảng giá #9, Hà Nội 2026-Q3).
+- Áp vào bản dự toán THCS #21:
+  - lỗi thiếu giá vật liệu 26 → 18;
+  - dòng tạm tính chưa có giá 17 → 9;
+  - 4 loại thiết bị được điền giá.
+- Xóa 63 thiết bị bị nhân đôi do nhập file 2 lần (người dùng đồng ý; đã đối chiếu 63/63 cặp trùng tên, đơn vị, số lượng; có ghi nhật ký `equipment.dedupe`).
+
+## 7. Cách chạy lại
 
 ```bash
 docker compose exec api pytest -q tests/api/test_boq_import.py   # 31 test của tính năng
