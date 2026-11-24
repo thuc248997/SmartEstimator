@@ -30,4 +30,5 @@ urlpatterns = [
     path("", include("apps.calculation.urls")),
     path("", include("apps.reports.urls")),
     path("", include("apps.datasync.urls")),
+    path("", include("apps.boqimport.urls")),
 ]

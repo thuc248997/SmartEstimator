@@ -21,7 +21,7 @@ async function request<T>(method: string, path: string, body?: unknown, query?: 
   const token = getToken();
   if (token) headers.Authorization = `Token ${token}`;
   let payload: BodyInit | undefined;
-  if (body instanceof URLSearchParams) payload = body;
+  if (body instanceof URLSearchParams || body instanceof FormData) payload = body;
   else if (body !== undefined) { headers["Content-Type"] = "application/json"; payload = JSON.stringify(body); }
   const res = await fetch(url, { method, headers, body: payload });
   if (res.status === 204) return undefined as T;
@@ -34,6 +34,8 @@ async function request<T>(method: string, path: string, body?: unknown, query?: 
 export const api = {
   get: <T>(p: string, q?: Record<string, string | number | undefined>) => request<T>("GET", p, undefined, q),
   post: <T>(p: string, b?: unknown) => request<T>("POST", p, b),
+  /** multipart/form-data (tải file lên) — trình duyệt tự đặt Content-Type kèm boundary. */
+  upload: <T>(p: string, form: FormData) => request<T>("POST", p, form),
   patch: <T>(p: string, b?: unknown) => request<T>("PATCH", p, b),
   del: (p: string) => request<void>("DELETE", p),
   async login(username: string, password: string) {
@@ -165,4 +167,36 @@ export function vndWords(v: string | number): string {
   }
   const s = (Number(v) < 0 ? "âm " : "") + parts.join(" ");
   return s.charAt(0).toUpperCase() + s.slice(1) + " đồng";
+}
+
+// ---------------------------------------------------------------- nhập BoQ
+export interface BoqCandidate {
+  work_item: number; code: string; name: string; unit: string; score: number; factor: string | null;
+  reasons: string[]; group: string; ref: string; coverage?: number;
+}
+export interface BoqLine {
+  row: number; stt: string; code_in_file: string; name: string; unit: string; quantity: string | null;
+  details: { text: string; expr: string }[]; warnings: string[]; candidates: BoqCandidate[];
+  selected: BoqCandidate | null; confidence: "high" | "medium" | "low"; source: "code" | "memory" | "match";
+  kind: "work" | "equipment" | "lump";
+}
+export type BoqField = "stt" | "code" | "name" | "unit" | "qty" | "item";
+export interface BoqPreview {
+  filename: string; sheets: string[]; sheet: string; header_row: number; columns: Record<BoqField, number | null>;
+  headers: { col: number; letter: string; text: string }[];
+  items: { row: number | null; name: string; lines: BoqLine[] }[];
+  skipped: { row: number; reason: string }[]; warnings: string[];
+  stats: { lines: number; code: number; memory: number; high: number; medium: number; low: number; equipment: number; lump: number };
+}
+export interface BoqCommitResult {
+  items_created: number; lines_created: number; matched: number; custom: number; converted: number;
+  default_items_removed: number; run?: Run;
+  equipment: number; install_lines: number; equipment_unpriced: number; prices?: AutoPrices;
+}
+export interface AutoPrices {
+  catalog: string | null;
+  applied: { code: string; name: string; unit: string; price: string; source: string }[];
+  ambiguous: { code: string; name: string; unit: string; options: string[] }[];
+  not_found: { code: string; name: string; unit: string }[];
+  run?: Run;
 }

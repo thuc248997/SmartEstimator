@@ -1,6 +1,6 @@
 # SmartEstimator — Kế hoạch việc còn lại (TODO)
 
-Cập nhật: 04/11/2026 (sau đợt giao diện tương tự G8)
+Cập nhật: 24/11/2026 (thêm nhập BoQ từ Excel)
 
 ## Trạng thái hiện tại
 
@@ -79,7 +79,13 @@ Ký hiệu: `[ ]` chưa làm · `[?]` cần người dùng xác nhận · ưu ti
 - [ ] **Chênh lệch giá** kiểu G8 (giá gốc ↔ giá thông báo, bảng THVT + giá gốc) và lưu **bảng giá thông báo** dùng lại cho nhiều công trình ("Lắp giá thông báo").
 - [ ] **Bộ hệ số chi phí riêng theo hạng mục** (G8: Công trình → Hệ số chi phí xây lắp). Hiện tỷ lệ chọn theo cả công trình rồi áp cho từng hạng mục.
 - [ ] **Chiết tính / đơn giá dự thầu / đơn giá chi tiết** (G8: sheet Chiết tính, Dự thầu; menu Đấu thầu, F5).
-- [ ] **Nhập tiên lượng từ Excel có mapping cột** và **Thẩm định**: tô đỏ chỗ sai mã, công thức, đơn giá; có báo cáo để in.
+- [x] **Nhập BoQ từ Excel** (24/11/2026): file Excel bất kỳ, tự dò cột (sửa tay được), hạng mục, diễn giải; gợi ý mã TT 38 theo tên + đơn vị + kích thước; quy đổi đơn vị; ghi nhớ lựa chọn (`BoqMatchMemory`); nhập xong tính ngay. Còn mở:
+  - [ ] Nâng chất lượng gợi ý: tên TT 38 bóc từ PDF còn thiếu ngữ cảnh (vd "Trát tường ngoài, 1,0", nhiều mã trùng tên khác chương) → bổ sung tên đầy đủ khi sửa 139 bảng; cân nhắc dùng mô hình ngôn ngữ để xếp hạng lại (cần khóa API, chi phí).
+  - [x] (24/11) So tên có dấu; tách thiết bị → Chi phí thiết bị + dòng công lắp đặt; tự áp giá VL từ công bố giá (`/revisions/{id}/auto-prices`); bỏ dòng tiêu đề lặp, nhận tiêu đề hạng mục ở cột khác.
+  - [ ] Nạp định mức chuyên ngành thông tin – truyền thông (cáp mạng, cáp quang, máng cáp, thiết bị mạng) — TT 38 không có.
+  - [ ] Tự áp giá VL mới khớp tên y hệt; vật liệu có quy cách (ống nhựa D20, ống HDPE D25…) cần ghép theo quy cách.
+  - [ ] Chưa đọc được ô công thức chưa có giá trị lưu (file sinh bằng phần mềm, chưa mở bằng Excel) trừ công thức số học đơn giản; file `.xls` cũ phải lưu lại thành `.xlsx`.
+- [ ] **Thẩm định**: tô đỏ chỗ sai mã, công thức, đơn giá; có báo cáo để in.
 - [ ] **Cước vận chuyển**: trọng lượng đơn vị, bậc hàng, loại đường, cự ly; cước bộ, cước sông, bù %, bù tiền.
 - [ ] **Quản trị CSDL định mức / đơn giá / giá VL-NC-M** trên web (tìm, lọc nhóm, thêm/sửa, tạo bộ mới dựa trên bộ hiện hành).
 - [ ] **Undo/redo** cho thao tác trên lưới.
