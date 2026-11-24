@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api, ApiError, CONSTRUCTION_TYPES, Detail, Equipment, fmt, Line, Page, Project, Release, Resource, ResourceTotal, Revision, Run, WorkItem } from "./api";
+import { api, ApiError, AutoPrices, CONSTRUCTION_TYPES, Detail, Equipment, fmt, Line, Page, Project, Release, Resource, ResourceTotal, Revision, Run, WorkItem } from "./api";
 import TienLuong, { EditableField, FocusInfo, normExpr, parseDetailInput, TLHandle, TLRow, viExpr } from "./sheets/TienLuong";
 import PhanTich from "./sheets/PhanTich";
 import TongHopVatTu, { displayCode } from "./sheets/TongHopVatTu";
@@ -8,6 +8,7 @@ import TongHopChiPhiXD, { sumEquipment } from "./sheets/TongHopChiPhiXD";
 import ChiPhiThietBi from "./sheets/ChiPhiThietBi";
 import Bia from "./sheets/Bia";
 import TraMa from "./TraMa";
+import BoqImport from "./BoqImport";
 import DataUpdate from "./DataUpdate";
 import type { CatalogItem } from "./api";
 import { errMsg, Modal, useToast } from "./ui";
@@ -48,7 +49,9 @@ type Dialog =
   | { kind: "trama"; query: string; itemId: number; beforeLineId?: number }
   | { kind: "props"; line: Line; k_nc: string; k_m: string; note: string; manual_vl: string; manual_nc: string; manual_m: string }
   | { kind: "info"; f: InfoForm }
-  | { kind: "data" };
+  | { kind: "data" }
+  | { kind: "boq" }
+  | { kind: "prices"; r: AutoPrices };
 type Ctx = { row?: TLRow; x: number; y: number };
 
 export default function Workbook({ projectId, revisionId, onLogout }: { projectId: number; revisionId?: number; onLogout: () => void }) {
@@ -599,6 +602,15 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
   const ctxRow = ctx?.row;
   const ctxLine = ctxRow && (ctxRow.kind === "line" || ctxRow.kind === "detail" || ctxRow.kind === "dghost") ? ctxRow.line : undefined;
   const run_ = (fn: () => void) => () => { setCtx(null); fn(); };
+  async function autoPrices() {
+    if (!rev) return;
+    try {
+      const r = await track(api.post<AutoPrices>(`/revisions/${rev.id}/auto-prices`));
+      await loadRevision(rev.id);
+      await loadRun(rev.id);
+      setDialog({ kind: "prices", r });
+    } catch (e) { fail(e); }
+  }
 
   return (
     <>
@@ -625,6 +637,10 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
               <button className="rbtn" disabled={locked} onClick={() => { const r = tl.current?.focusedRow(); if (r?.itemId) deleteItem(r.itemId); else toast("Chọn một ô trong hạng mục", true); }}><span className="ico">🗑️</span>Xóa hạng mục</button>
             </div>
           </div><div className="label">Hạng mục</div></div>
+
+          <div className="rgroup"><div className="btns">
+            <button className="rbtn primary" onClick={() => setDialog({ kind: "boq" })} disabled={locked} title="Tải file Excel khối lượng bóc từ bản vẽ, tự gợi ý mã định mức và tính dự toán"><span className="ico">📤</span>Nhập BoQ<br />từ Excel</button>
+          </div><div className="label">Nhập khối lượng</div></div>
 
           <div className="rgroup"><div className="btns">
             <button className="rbtn primary" onClick={actInsert} disabled={locked}><span className="ico">➕</span>Chèn dòng<br />(Insert)</button>
@@ -673,6 +689,7 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
           </div><div className="label">Công trình</div></div>
           <div className="rgroup"><div className="btns">
             <button className="rbtn primary" onClick={() => setDialog({ kind: "data" })}><span className="ico">🔄</span>Cập nhật<br />dữ liệu</button>
+            <button className="rbtn" disabled={locked || !lineCount} title="Áp giá vật liệu còn thiếu từ công bố giá địa phương khi tên và đơn vị khớp rõ (ghi nguồn)" onClick={autoPrices}><span className="ico">🏷️</span>Tự áp giá<br />VL công bố</button>
           </div><div className="label">Định mức & giá</div></div>
           <div className="rgroup"><div className="btns">
             <button className="rbtn" onClick={() => setSheet("thkp")}><span className="ico">📊</span>THKP<br />hạng mục</button>
@@ -776,6 +793,39 @@ export default function Workbook({ projectId, revisionId, onLogout }: { projectI
         </div>
       )}
 
+      {dialog?.kind === "boq" && (
+        <BoqImport revisionId={rev.id} releaseId={project.norm_release} onClose={() => setDialog(null)}
+          onDone={(r) => {
+            setDialog(null);
+            setSheet("tl");
+            void (async () => {
+              try {
+                await loadRevision(rev.id);
+                if (r.run?.status === "done") { await loadRun(rev.id); setCalcState("idle"); } else scheduleRecalc(0);
+              } catch (e) { fail(e); }
+            })();
+            const parts = [`${r.lines_created} dòng tiên lượng (${r.matched} có mã định mức${r.install_lines ? `, trong đó ${r.install_lines} dòng công lắp đặt` : ""}${r.converted ? `, ${r.converted} dòng quy đổi đơn vị` : ""}${r.custom ? `, ${r.custom} tạm tính cần nhập giá` : ""})`];
+            if (r.equipment) parts.push(`${r.equipment} thiết bị vào sheet Chi phí thiết bị${r.equipment_unpriced ? ` (${r.equipment_unpriced} chưa có đơn giá)` : ""}`);
+            if (r.prices?.applied.length) parts.push(`tự áp giá ${r.prices.applied.length} vật liệu từ công bố giá`);
+            toast(`Đã nhập ${parts.join("; ")}. Dự toán đã được tính.`);
+            if (r.prices && (r.prices.applied.length || r.prices.ambiguous.length || r.prices.not_found.length)) setDialog({ kind: "prices", r: r.prices });
+          }} />
+      )}
+      {dialog?.kind === "prices" && (
+        <Modal title="Tự áp giá vật liệu từ công bố giá" wide onClose={() => setDialog(null)}
+          footer={<button className="btn primary" onClick={() => setDialog(null)}>Đóng</button>}>
+          <div className="boq-review">
+            <p>Nguồn: <b>{dialog.r.catalog ?? "không có bảng công bố giá phù hợp với địa phương của công trình"}</b>. Giá tự áp được lưu thành giá riêng của bản dự toán (có ghi nguồn), xem / sửa ở sheet <b>Tổng hợp vật tư</b>.</p>
+            {dialog.r.applied.length > 0 && <><b>Đã áp ({dialog.r.applied.length})</b>
+              <table className="boq-table"><tbody>{dialog.r.applied.map((a) => <tr key={a.code}><td>{a.name}</td><td>{a.unit}</td><td className="num">{fmt.money(a.price)}</td><td><small className="muted">{a.source}</small></td></tr>)}</tbody></table></>}
+            {dialog.r.ambiguous.length > 0 && <><b className="st-warn-t">Có nhiều giá, chưa áp — chọn tay ở Tổng hợp vật tư ({dialog.r.ambiguous.length})</b>
+              <table className="boq-table"><tbody>{dialog.r.ambiguous.map((a) => <tr key={a.code}><td>{a.name}</td><td>{a.unit}</td><td>{a.options.map((o) => fmt.money(o)).join(" / ")}</td></tr>)}</tbody></table></>}
+            {dialog.r.not_found.length > 0 && <><b className="st-err-t">Không có trong công bố giá — nhập giá tay ({dialog.r.not_found.length})</b>
+              <table className="boq-table"><tbody>{dialog.r.not_found.map((a) => <tr key={a.code}><td>{a.name}</td><td>{a.unit}</td></tr>)}</tbody></table></>}
+            {!dialog.r.applied.length && !dialog.r.ambiguous.length && !dialog.r.not_found.length && <p>Mọi vật liệu đã có giá.</p>}
+          </div>
+        </Modal>
+      )}
       {dialog?.kind === "trama" && (
         <TraMa releaseId={project.norm_release} initialQuery={dialog.query} target={`“${itemName(dialog.itemId)}”${dialog.beforeLineId ? " (lên trên dòng đang chọn)" : ""}`}
           onClose={() => setDialog(null)} onPick={(wis) => void insertWorkItems(wis, dialog.itemId, dialog.beforeLineId)}

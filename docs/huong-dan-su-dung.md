@@ -21,6 +21,7 @@ flowchart LR
 2. [Tạo công trình mới](#2-tạo-công-trình-mới)
 3. [Sheet Tiên lượng: nhập công tác](#3-sheet-tiên-lượng-nhập-công-tác)
 4. [Tra mã định mức](#4-tra-mã-định-mức)
+   - [Nhập BoQ từ Excel (tự gợi ý mã và tính)](#4b-nhập-boq-từ-excel-tự-gợi-ý-mã-và-tính)
 5. [Diễn giải khối lượng](#5-diễn-giải-khối-lượng)
 6. [Menu chuột phải và phím tắt](#6-menu-chuột-phải-và-phím-tắt)
 7. [Phân tích và Tổng hợp vật tư, áp giá thông báo](#7-phân-tích-và-tổng-hợp-vật-tư-áp-giá-thông-báo)
@@ -83,6 +84,43 @@ Bấm **Tạo và mở bảng dự toán**.
 - Khung dưới hiện **hao phí định mức** của mã đang chọn.
 - Tích nhiều mã rồi bấm **Chèn N mã đã chọn**. Phím tắt: ↑↓ để di chuyển, Space để tích, Enter để chèn.
 - Phím **F3** mở Tra mã bất kỳ lúc nào. Khi mở từ một dòng công tác, các mã sẽ được chèn lên trên dòng đó.
+
+## 4b. Nhập BoQ từ Excel (tự gợi ý mã và tính)
+
+Dùng khi đã có bảng khối lượng bóc từ bản vẽ (file Excel của đơn vị thiết kế), kể cả khi file **không có mã định mức**.
+
+![Nhập BoQ](images/06b-nhap-boq.png)
+
+1. Ribbon **Trang chủ** → **Nhập BoQ từ Excel** → chọn file `.xlsx` / `.xlsm`. File `.xls` cũ: mở bằng Excel, lưu thành `.xlsx`.
+2. Hệ thống tự đọc:
+   - dòng tiêu đề và các cột STT, Mã hiệu (nếu có), Tên công tác / Nội dung công việc, Đơn vị, Khối lượng; cột "Hạng mục" nếu có. Tiêu đề hai tầng ("Khối lượng" → "Toàn bộ") cũng nhận được;
+   - **hạng mục**: dòng có tên nhưng không có đơn vị và khối lượng (A, B, I, II, "PHẦN MÓNG"…);
+   - **diễn giải khối lượng**: dòng ngay dưới công tác, có khối lượng nhưng không có STT và đơn vị. Nếu tổng diễn giải khác khối lượng dòng chính thì giữ khối lượng dòng chính và báo;
+   - tiêu đề hạng mục ghi ở cột khác cột tên (vd "I. HỆ THỐNG CAMERA" nằm ở cột STT);
+   - bỏ qua dòng "Tổng cộng", dòng đánh số cột (1) (2) (3) và dòng tiêu đề lặp lại giữa file.
+
+   Đọc sai thì mở **Cách đọc file… — sửa nếu đọc sai**, chọn lại sheet / dòng tiêu đề / cột rồi bấm **Đọc lại**.
+3. Mỗi dòng được phân **loại**:
+   - **Công tác**: công việc xây lắp ("Bê tông móng", "Trát tường") hoặc vật tư tính theo chiều dài/diện tích ("Cáp Cat6 — m", "Ống nhựa D20 — m"). Với tên chỉ ghi vật tư, hệ thống tự thử thêm "Lắp đặt …" / "Kéo rải …" khi tìm mã;
+   - **Thiết bị**: dòng chỉ ghi tên thiết bị, đơn vị cái / bộ / chiếc / tủ / sợi (loa, camera, switch, UPS, tủ rack…). Thiết bị được đưa vào sheet **Chi phí thiết bị** (nhập đơn giá theo báo giá — ô "Đơn giá TB", để trống thì nhập sau), kèm một dòng **công lắp đặt** trong Tiên lượng nếu chọn được mã lắp đặt ("— Không tính công lắp đặt —" nếu không có). Nếu định mức lắp đặt có chính thiết bị trong vật liệu (vd "Lắp ổ cắm" có "Ổ cắm 1 cái"), vật liệu đó được đặt giá 0 đ để không tính hai lần;
+   - **Trọn gói** (đơn vị Gói / Lô / Hệ thống): nhập thành dòng tạm tính, cần nhập đơn giá.
+
+   Đổi loại ở ô chọn đầu cột "Loại / trạng thái" nếu hệ thống phân loại sai.
+
+   Mã được gợi ý theo tên (so **có dấu**: "cáp" khác "cấp", "cắt"), đơn vị và kích thước ghi trong tên (dày, cao, rộng, đường kính: "d>18mm", "cao ≤6m", "dày 1,5cm"). Quy cách vật liệu (mác bê tông, đá 1x2, VXM 75) không dùng để chọn mã vì nằm trong hao phí. Trạng thái:
+   - **Mã trong file**: file đã có mã hiệu đúng → dùng luôn;
+   - **Đã nhớ**: lần nhập trước bạn đã chọn mã cho đúng tên công tác này;
+   - **Khớp tốt**: tên và đơn vị khớp rõ ràng;
+   - **Cần xem**: đã chọn mã gần nhất nhưng còn mã gần giống (khác khoảng kích thước, khác chương) — mở danh sách để chọn lại, hoặc **🔎 Tra mã khác…**;
+   - **Tạm tính**: chưa có mã phù hợp → nhập thành mã `TT.xx`, sau đó nhập đơn giá VL / NC / M tay.
+4. Cột **KL định mức** là khối lượng đã quy đổi sang đơn vị của mã (45 m3 → 0,45 với mã 100m3; 820 kg → 0,82 tấn). Đơn vị khác loại (vd m2 ↔ m3) thì phải nhập hệ số quy đổi.
+5. Bỏ tích các dòng không muốn nhập, sửa tên hạng mục nếu cần, rồi bấm **Nhập N dòng & tính dự toán**. Hạng mục mặc định rỗng ("Hạng mục 1") được bỏ; các dòng được thêm vào sheet Tiên lượng, cột Ghi chú giữ tên + khối lượng gốc của BoQ để đối chiếu, và dự toán được tính ngay.
+
+6. Sau khi nhập, giá **vật liệu** còn thiếu được **tự áp từ công bố giá** của địa phương khi tên và đơn vị khớp rõ (vd "Thiếc hàn", "Cồn công nghiệp"); giá lưu thành giá riêng của bản dự toán, có ghi nguồn và số trang. Hộp thoại sau khi nhập liệt kê vật liệu đã áp, vật liệu có nhiều giá (chọn tay) và vật liệu không có trong công bố (nhập tay ở sheet Tổng hợp vật tư). Có thể chạy lại bất kỳ lúc nào: ribbon **Công trình → Tự áp giá VL công bố**.
+
+> Lưu ý về dữ liệu định mức: bộ TT 38/2026 đang nạp **chưa có** định mức cho cáp mạng / cáp quang, máng / thang cáp, loa, tủ rack, patch panel, bộ phát wifi… (các công tác này thường theo định mức chuyên ngành thông tin – truyền thông). Những dòng đó sẽ là tạm tính hoặc thiết bị không kèm công lắp đặt.
+
+> Gợi ý mã chỉ là gợi ý: TT 38/2026 có nhiều mã cùng tên khác nhau ở khoảng kích thước, biện pháp thi công hoặc chương (xây mới / sửa chữa), nên hãy rà các dòng "Cần xem" trước khi phê duyệt. Lựa chọn của bạn được ghi nhớ cho lần nhập sau.
 
 ## 5. Diễn giải khối lượng
 

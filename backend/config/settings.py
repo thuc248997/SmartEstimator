@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "apps.reports",
     "apps.audit",
     "apps.datasync",
+    "apps.boqimport",
 ]
 
 MIDDLEWARE = [
