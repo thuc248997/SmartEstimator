@@ -118,6 +118,14 @@ Dùng khi đã có bảng khối lượng bóc từ bản vẽ (file Excel của
 
 6. Sau khi nhập, giá **vật liệu** còn thiếu được **tự áp từ công bố giá** của địa phương khi tên và đơn vị khớp rõ (vd "Thiếc hàn", "Cồn công nghiệp"); giá lưu thành giá riêng của bản dự toán, có ghi nguồn và số trang. Hộp thoại sau khi nhập liệt kê vật liệu đã áp, vật liệu có nhiều giá (chọn tay) và vật liệu không có trong công bố (nhập tay ở sheet Tổng hợp vật tư). Có thể chạy lại bất kỳ lúc nào: ribbon **Công trình → Tự áp giá VL công bố**.
 
+7. **Giá tham khảo từ dự toán F1**: có thể nạp sheet "Vật liệu" của một file dự toán xuất từ phần mềm F1 làm bảng giá tham khảo (dùng sau công bố giá của Sở):
+   ```
+   docker compose cp "<file F1>.xlsm" api:/tmp/f1.xlsm
+   docker compose exec api python manage.py import_f1_prices /tmp/f1.xlsm --label "<tên công trình nguồn>"
+   ```
+   Sau đó bấm **Công trình → Tự áp giá còn thiếu**: điền giá cho vật liệu trong định mức, dòng tạm tính (vd "Cáp Cat6", cáp quang — quy đổi km → m) và thiết bị (vd "Ổ cắm HDMI") còn trống, ghi nguồn, không ghi đè giá đã nhập. Tên phải khớp rõ (≥ 85% âm tiết, cùng số quy cách) mới điền.
+8. Nhập lại cùng file vào cùng bản dự toán không nhân đôi thiết bị (thiết bị trùng tên, đơn vị, số lượng được bỏ qua).
+
 > Lưu ý về dữ liệu định mức: bộ TT 38/2026 đang nạp **chưa có** định mức cho cáp mạng / cáp quang, máng / thang cáp, loa, tủ rack, patch panel, bộ phát wifi… (các công tác này thường theo định mức chuyên ngành thông tin – truyền thông). Những dòng đó sẽ là tạm tính hoặc thiết bị không kèm công lắp đặt.
 
 > Gợi ý mã chỉ là gợi ý: TT 38/2026 có nhiều mã cùng tên khác nhau ở khoảng kích thước, biện pháp thi công hoặc chương (xây mới / sửa chữa), nên hãy rà các dòng "Cần xem" trước khi phê duyệt. Lựa chọn của bạn được ghi nhớ cho lần nhập sau.

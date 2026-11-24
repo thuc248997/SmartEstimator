@@ -82,7 +82,8 @@ Ký hiệu: `[ ]` chưa làm · `[?]` cần người dùng xác nhận · ưu ti
 - [x] **Nhập BoQ từ Excel** (24/11/2026): file Excel bất kỳ, tự dò cột (sửa tay được), hạng mục, diễn giải; gợi ý mã TT 38 theo tên + đơn vị + kích thước; quy đổi đơn vị; ghi nhớ lựa chọn (`BoqMatchMemory`); nhập xong tính ngay. Còn mở:
   - [ ] Nâng chất lượng gợi ý: tên TT 38 bóc từ PDF còn thiếu ngữ cảnh (vd "Trát tường ngoài, 1,0", nhiều mã trùng tên khác chương) → bổ sung tên đầy đủ khi sửa 139 bảng; cân nhắc dùng mô hình ngôn ngữ để xếp hạng lại (cần khóa API, chi phí).
   - [x] (24/11) So tên có dấu; tách thiết bị → Chi phí thiết bị + dòng công lắp đặt; tự áp giá VL từ công bố giá (`/revisions/{id}/auto-prices`); bỏ dòng tiêu đề lặp, nhận tiêu đề hạng mục ở cột khác.
-  - [ ] Nạp định mức chuyên ngành thông tin – truyền thông (cáp mạng, cáp quang, máng cáp, thiết bị mạng) — TT 38 không có.
+  - [x] (24/11) Nạp giá vật tư từ dự toán F1 (`import_f1_prices`) làm bảng giá tham khảo; "Tự áp giá còn thiếu" điền cả dòng tạm tính và thiết bị; nhập lại file không nhân đôi thiết bị.
+  - [ ] Nạp định mức chuyên ngành thông tin – truyền thông (file F1 THPT Thiên Lộc dùng 44/2020/TT-BTTTT) (cáp mạng, cáp quang, máng cáp, thiết bị mạng) — TT 38 không có.
   - [ ] Tự áp giá VL mới khớp tên y hệt; vật liệu có quy cách (ống nhựa D20, ống HDPE D25…) cần ghép theo quy cách.
   - [ ] Chưa đọc được ô công thức chưa có giá trị lưu (file sinh bằng phần mềm, chưa mở bằng Excel) trừ công thức số học đơn giản; file `.xls` cũ phải lưu lại thành `.xlsx`.
 - [ ] **Thẩm định**: tô đỏ chỗ sai mã, công thức, đơn giá; có báo cáo để in.

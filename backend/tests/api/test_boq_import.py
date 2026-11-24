@@ -351,6 +351,11 @@ def test_equipment_goes_to_equipment_cost_with_install_line(client, seeded):
 
     assert c.data["equipment_in_norm"] == ["Camera IP dome 2MP"]
     assert ResourceOverride.objects.get(revision_id=rid, resource__code="VL.CAMERA").price == 0
+    # nhập lại cùng file: không nhân đôi thiết bị
+    again = client.post(f"/api/v1/revisions/{rid}/boq-import/commit", payload, format="json")
+    assert again.status_code == 201, again.content
+    assert again.data["equipment"] == 0 and again.data["equipment_existing"] == 3
+    assert EquipmentCost.objects.filter(revision_id=rid).count() == 3
     # hạng mục chỉ có thiết bị không lắp đặt → không tạo hạng mục rỗng
     rev = client.get(f"/api/v1/revisions/{rid}").data
     assert all(it["lines"] for it in rev["items"])
@@ -396,3 +401,87 @@ def test_auto_apply_catalog_prices(client, seeded):
     # chạy lại không áp trùng
     r2 = client.post(f"/api/v1/revisions/{rid}/auto-prices")
     assert r2.data["applied"] == []
+
+
+# ----------------------------------------------------------------------------- giá tham khảo từ dự toán F1
+
+
+def _f1_xlsx(tmp_path):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Vật liệu"
+    ws["A1"] = "BẢNG TỔNG HỢP VẬT LIỆU"
+    ws["A2"] = "(Căn cứ theo Giá vật liệu quý 3/2026 - TP Hà Nội)"
+    hdr = ["STT", "Mã hiệu", "TT Vật tư", "Vật liệu phụ", "Tên vật tư", "Đơn vị", "Hệ số", "Nguồn mua", "Khối lượng",
+           "Giá gốc", "TT gốc", "Giá TB sau thuế", "Giá thông báo"] + [""] * 11 + ["Giá hiện tại"]  # fmt: skip
+    for c, v in enumerate(hdr, 1):
+        ws.cell(row=6, column=c, value=v)
+    data = [
+        (1, "V11345", "Cáp Cat6", "m", 0, 10820, 10820),
+        (2, "V91767", "Cáp quang 4FO trong nhà", "km", 0, 4000000, 4000000),
+        (3, "V10003", "Ổ cắm HDMI", "bộ", 0, 462000, 462000),
+        (4, "V10005", "Ổ cắm thoại + mặt + hạt", "bộ", 0, 180000, 180000),
+        (5, "V86545", "Xi măng PC40 bao", "kg", 0, 1500, 1500),
+        (6, "V00750", "Vật liệu khác", "%", None, None, 0),
+        (7, "V20357", "Asitol", "lít", 0, 0, 0),
+    ]
+    r = 8
+    for stt, code, name, unit, goc, tb, ht in data:
+        for c, v in {1: stt, 2: code, 5: name, 6: unit, 10: goc, 13: tb, 25: ht}.items():
+            ws.cell(row=r, column=c, value=v)
+        ws.cell(row=r + 1, column=2, value="01.02.03")  # dòng công tác dùng vật tư (không STT)
+        ws.cell(row=r + 1, column=5, value="Lắp đặt ...")
+        r += 2
+    p = tmp_path / "f1.xlsm"
+    wb.save(p)
+    return p
+
+
+def test_f1_import_and_fill_custom_lines_and_equipment(client, seeded, tmp_path):
+    from apps.boqimport.f1 import import_f1_file
+    from apps.pricebook.models import PriceObservation
+    from apps.projects.models import EquipmentCost, ResourceOverride
+
+    rel, info = import_f1_file(_f1_xlsx(tmp_path), "Thử")
+    assert info == {"created": True, "items": 5, "skipped": 2, "period": "2026-Q3"}
+    assert rel.meta["source_kind"] == "estimate"
+
+    PriceObservation.objects.filter(resource__code="VL.XM").delete()
+    rid = _revision(client, seeded)
+    item = client.get(f"/api/v1/revisions/{rid}").data["items"][0]["id"]
+    client.post(
+        f"/api/v1/revisions/{rid}/lines",
+        [
+            {"item": item, "work_item": WorkItem.objects.get(code="AF.11111").id, "quantity": "1"},
+            {"item": item, "custom_code": "TT.01", "name": "Cáp Cat6", "unit": "m", "quantity": "100"},
+            {
+                "item": item,
+                "custom_code": "TT.02",
+                "name": "Cáp quang 4FO singlemode đi trong nhà",
+                "unit": "m",
+                "quantity": "50",
+            },  # fmt: skip
+            {
+                "item": item,
+                "custom_code": "TT.03",
+                "name": "Cáp Cat6",
+                "unit": "m",
+                "quantity": "1",
+                "manual_vl": "9999",
+            },  # fmt: skip
+        ],
+        format="json",
+    )
+    EquipmentCost.objects.create(revision_id=rid, name="Ổ cắm HDMI [Mạng]", unit="Bộ", quantity=5)
+    EquipmentCost.objects.create(revision_id=rid, name="Ổ cắm mạng đơn, bao gồm đế, mặt, hạt", unit="Bộ", quantity=5)
+
+    r = client.post(f"/api/v1/revisions/{rid}/auto-prices")
+    assert r.status_code == 200, r.content
+    filled = {x["name"]: x["price"] for x in r.data["lines_filled"]}
+    assert filled == {"Cáp Cat6": "10820", "Cáp quang 4FO singlemode đi trong nhà": "4000"}  # km → m; không ghi đè 9999
+    assert EstimateLine.objects.get(item__revision_id=rid, custom_code="TT.03").manual_vl == 9999
+    assert [x["name"] for x in r.data["equipment_filled"]] == ["Ổ cắm HDMI"]  # "Ổ cắm thoại" không được ghép
+    assert EquipmentCost.objects.get(revision_id=rid, name__startswith="Ổ cắm HDMI").unit_price == 462000
+    # Xi măng PC40: không trùng tên y hệt → khớp gần đúng theo tiền tố, chỉ một giá → áp, ghi rõ nguồn F1
+    ov = ResourceOverride.objects.get(revision_id=rid, resource__code="VL.XM")
+    assert ov.price == 1500 and "Tự áp từ giá tham khảo" in ov.reason and "gần đúng" in ov.reason
